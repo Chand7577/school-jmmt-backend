@@ -1,12 +1,11 @@
 # Enable PHP execution
 AddHandler application/x-httpd-php .php
 
-# Universal CORS Headers for all API responses
+# Remove any duplicate CORS headers so PHP's headers remain clean and unique
 <IfModule mod_headers.c>
-    Header always set Access-Control-Allow-Origin "*"
-    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
-    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept"
-    Header always set Access-Control-Max-Age "86400"
+    Header unset Access-Control-Allow-Origin
+    Header unset Access-Control-Allow-Methods
+    Header unset Access-Control-Allow-Headers
 </IfModule>
 
 # Security
