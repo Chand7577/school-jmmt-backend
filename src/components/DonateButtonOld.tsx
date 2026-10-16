@@ -241,7 +241,7 @@ const DonateButton = () => {
                 isOpen: true,
                 status: 'success',
                 title: 'Thank You for Your Donation! 🎉',
-                message: `Your generous donation of ₹${formData.amount} has been received successfully. A confirmation email has been sent to ${formData.donor_email}`,
+                message: `Your generous donation of ₹${formData.amount} has been received successfully. We truly appreciate your kind support!`,
                 receiptNumber: verifyData.data.receipt_number,
                 amount: formData.amount
               });
