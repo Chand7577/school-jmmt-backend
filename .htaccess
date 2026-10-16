@@ -1,17 +1,13 @@
 # Enable PHP execution
 AddHandler application/x-httpd-php .php
 
-# CORS Headers for API
+# Universal CORS Headers for all API responses
 <IfModule mod_headers.c>
-    Header set Access-Control-Allow-Origin "*"
-    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
-    Header set Access-Control-Allow-Headers "Content-Type, Authorization"
+    Header always set Access-Control-Allow-Origin "*"
+    Header always set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header always set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Accept"
+    Header always set Access-Control-Max-Age "86400"
 </IfModule>
-
-# Handle preflight requests
-RewriteEngine On
-RewriteCond %{REQUEST_METHOD} OPTIONS
-RewriteRule ^(.*)$ $1 [R=200,L]
 
 # Security
 Options -Indexes
@@ -20,4 +16,3 @@ ServerSignature Off
 # Error handling
 php_flag display_errors Off
 php_flag log_errors On
-php_value error_log /path/to/your/error_log.txt
