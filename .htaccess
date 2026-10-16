@@ -1,13 +1,6 @@
 # Enable PHP execution
 AddHandler application/x-httpd-php .php
 
-# Remove any duplicate CORS headers so PHP's headers remain clean and unique
-<IfModule mod_headers.c>
-    Header unset Access-Control-Allow-Origin
-    Header unset Access-Control-Allow-Methods
-    Header unset Access-Control-Allow-Headers
-</IfModule>
-
 # Security
 Options -Indexes
 ServerSignature Off
