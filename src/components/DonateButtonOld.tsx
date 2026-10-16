@@ -8,7 +8,7 @@ declare global {
   }
 }
 
-const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://backend-jmmt.infinityfree.me";
+const API_BASE_URL = import.meta.env.VITE_BACKEND_URL || "https://school-jmmt-backend.onrender.com";
 
 interface DonationFormData {
   donor_name: string;
