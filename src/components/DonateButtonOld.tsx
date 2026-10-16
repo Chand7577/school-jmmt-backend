@@ -262,6 +262,7 @@ const DonateButton = () => {
             }
           } catch (error: any) {
             console.error('Verification error:', error);
+            setIsModalOpen(false);
             setStatusModal({
               isOpen: true,
               status: 'error',
@@ -274,6 +275,7 @@ const DonateButton = () => {
         modal: {
           ondismiss: function () {
             setIsProcessing(false);
+            setIsModalOpen(false);
             setStatusModal({
               isOpen: true,
               status: 'cancelled',
@@ -287,6 +289,7 @@ const DonateButton = () => {
       const razorpay = new window.Razorpay(options);
       razorpay.on('payment.failed', function (resp: any) {
         setIsProcessing(false);
+        setIsModalOpen(false);
         setStatusModal({
           isOpen: true,
           status: 'error',
@@ -294,10 +297,12 @@ const DonateButton = () => {
           message: resp.error?.description || 'Your payment was declined by the bank or gateway. Please try again with another card or method.',
         });
       });
+      setIsModalOpen(false);
       razorpay.open();
 
     } catch (error: any) {
       console.error('Donation error:', error);
+      setIsModalOpen(false);
       setStatusModal({
         isOpen: true,
         status: 'error',
