@@ -120,9 +120,10 @@ const Header = () => {
                 >
                   Contact
                 </a>
-                {/* Donate Button - Desktop */}
-                <DonateButton />
               </div>
+
+              {/* Donate Button - Visible on both Mobile & Desktop */}
+              <DonateButton />
 
               {/* Animated Staggered Menu for all screens */}
               <StaggeredMenu

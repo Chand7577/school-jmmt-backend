@@ -313,9 +313,9 @@ const DonateButton = () => {
       {/* Donate Button */}
       <button
         onClick={() => setIsModalOpen(true)}
-        className="group relative inline-flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-[#E8B923] to-[#d4a61f] text-[#1E2A44] font-black text-xs rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300"
+        className="group relative inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-5 py-1.5 sm:py-2 bg-gradient-to-r from-[#E8B923] to-[#d4a61f] text-[#1E2A44] font-black text-xs rounded-full hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-300 shadow-md shrink-0"
       >
-        <Heart className="h-4 w-4 group-hover:scale-110 transition-transform" fill="currentColor" />
+        <Heart className="h-3.5 w-3.5 sm:h-4 sm:w-4 group-hover:scale-110 transition-transform" fill="currentColor" />
         <span>DONATE</span>
       </button>
 
