@@ -1,0 +1,65 @@
+===========================================
+DEPLOYMENT CONFIGURATION TEMPLATE
+===========================================
+
+After uploading files, update these configurations:
+
+-------------------------------------------
+FILE: config/database.php
+-------------------------------------------
+
+define('DB_HOST', 'YOUR_DB_HOST');           // e.g., localhost or sql123.infinityfree.net
+define('DB_NAME', 'YOUR_DB_NAME');           // e.g., jmms_donations
+define('DB_USER', 'YOUR_DB_USERNAME');       // Database username
+define('DB_PASS', 'YOUR_DB_PASSWORD');       // Database password
+define('DB_SOCKET', '');                     // Leave empty for online hosting
+
+-------------------------------------------
+FILE: config/razorpay.php
+-------------------------------------------
+
+define('RAZORPAY_KEY_ID', 'rzp_test_YOUR_KEY_ID');
+define('RAZORPAY_KEY_SECRET', 'YOUR_KEY_SECRET');
+define('RAZORPAY_TEST_MODE', true);          // Set to false for production
+
+-------------------------------------------
+FRONTEND: DonateButton.tsx
+-------------------------------------------
+
+Update these URLs (2 places):
+
+Line ~95:
+fetch('https://YOUR-DOMAIN.com/api/donations/create-order.php', {
+
+Line ~117:
+fetch('https://YOUR-DOMAIN.com/api/donations/verify-payment.php', {
+
+Replace YOUR-DOMAIN.com with your actual hosting domain!
+
+-------------------------------------------
+DATABASE SETUP
+-------------------------------------------
+
+1. Login to phpMyAdmin in your hosting
+2. Create database: jmms_donations
+3. Import file: donations.sql
+4. Verify tables created:
+   - donations
+   - donation_stats (view)
+
+-------------------------------------------
+TEST ENDPOINTS
+-------------------------------------------
+
+After deployment, test:
+
+Create Order:
+https://YOUR-DOMAIN.com/api/donations/create-order.php
+
+Verify Payment:
+https://YOUR-DOMAIN.com/api/donations/verify-payment.php
+
+Should both show "Method not allowed" for GET requests
+(This means they're working and waiting for POST requests)
+
+===========================================
