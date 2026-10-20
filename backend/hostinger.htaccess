@@ -1,0 +1,38 @@
+# ==============================================================
+# Hostinger Apache Configuration for JMMS School (React + PHP)
+# ==============================================================
+
+Options -Indexes
+RewriteEngine On
+
+# 1. Protect sensitive configuration and PHP includes from direct URL access
+<FilesMatch "^(database|razorpay|auth)\.php$">
+    # Allow internal PHP require/include, deny direct browser requests
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+RewriteRule ^config/ - [F,L]
+RewriteRule ^includes/ - [F,L]
+
+# 2. CORS Headers for API endpoints
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+</IfModule>
+
+# 3. Handle API Requests directly (pass through to PHP)
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^ - [L]
+
+# 4. React Single Page App (SPA) Routing
+# If the request is not for a real file or directory, forward to index.html
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^ index.html [L]

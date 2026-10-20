@@ -8,9 +8,9 @@
 
 define('DB_HOST', getenv('DB_HOST') ?: 'localhost');
 define('DB_PORT', getenv('DB_PORT') ?: '3306');
-define('DB_NAME', getenv('DB_NAME') ?: 'school_admin');
-define('DB_USER', getenv('DB_USER') ?: 'root');
-define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : '');
+define('DB_NAME', getenv('DB_NAME') ?: 'u521604141_jmmt_school');
+define('DB_USER', getenv('DB_USER') ?: 'u521604141_jmmt_admin');
+define('DB_PASS', getenv('DB_PASS') !== false ? getenv('DB_PASS') : 'nike$Nike1326');
 define('DB_CHARSET', 'utf8mb4');
 define('DB_SOCKET', getenv('DB_SOCKET') ?: '');
 
@@ -40,20 +40,18 @@ class Database {
                     PDO::ATTR_TIMEOUT => 10,
                 ];
 
-                // TiDB Cloud and cloud MySQL providers require SSL on non-standard ports (e.g., 4000)
-                $caCerts = [
-                    '/etc/ssl/certs/ca-certificates.crt', // Debian/Ubuntu (Docker on Render)
-                    '/etc/pki/tls/certs/ca-bundle.crt',   // RedHat/CentOS
-                ];
-                foreach ($caCerts as $ca) {
-                    if (file_exists($ca)) {
-                        $options[PDO::MYSQL_ATTR_SSL_CA] = $ca;
-                        break;
+                // SSL only needed for cloud MySQL (non-localhost). Skip for Hostinger localhost.
+                if ($this->host !== 'localhost' && $this->host !== '127.0.0.1') {
+                    $caCerts = [
+                        '/etc/ssl/certs/ca-certificates.crt', // Debian/Ubuntu
+                        '/etc/pki/tls/certs/ca-bundle.crt',   // RedHat/CentOS
+                    ];
+                    foreach ($caCerts as $ca) {
+                        if (file_exists($ca)) {
+                            $options[PDO::MYSQL_ATTR_SSL_CA] = $ca;
+                            break;
+                        }
                     }
-                }
-                // Fallback: allow SSL connection without strict cert verification if CA file path is custom
-                if (!isset($options[PDO::MYSQL_ATTR_SSL_CA]) && $this->port == 4000) {
-                    $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
                 }
                 
                 $this->connection = new PDO($dsn, $this->username, $this->password, $options);

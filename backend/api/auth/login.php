@@ -8,8 +8,8 @@
 
 header('Content-Type: application/json');
 header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: POST');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Methods: POST, OPTIONS');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 // Handle preflight requests
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
@@ -32,14 +32,14 @@ try {
         sendJsonResponse(['success' => false, 'message' => 'Invalid JSON input'], 400);
     }
     
-    $email = sanitizeInput($input['email'] ?? '');
+    $email = sanitizeInput($input['email'] ?? $input['username'] ?? '');
     $password = $input['password'] ?? '';
     
     // Validate input
     if (empty($email) || empty($password)) {
         sendJsonResponse([
             'success' => false,
-            'message' => 'Email and password are required'
+            'message' => 'Username/email and password are required'
         ], 400);
     }
     
@@ -51,6 +51,7 @@ try {
             'success' => true,
             'message' => 'Login successful',
             'data' => [
+                'token' => $result['token'],
                 'user' => $result['user'],
                 'csrf_token' => getCSRFToken()
             ]

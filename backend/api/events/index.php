@@ -21,19 +21,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 require_once '../../config/database.php';
 require_once '../../includes/auth.php';
 
-// Check authentication for all requests
-if (!isAdminLoggedIn()) {
+$currentAdmin = getCurrentAdmin();
+$method = $_SERVER['REQUEST_METHOD'];
+
+// Check authentication for mutating requests
+if ($method !== 'GET' && !$currentAdmin) {
     sendJsonResponse(['success' => false, 'message' => 'Authentication required'], 401);
 }
 
-$currentAdmin = getCurrentAdmin();
-$method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $pathParts = explode('/', trim($path, '/'));
 $eventId = end($pathParts);
 
-// If the last part is 'index.php' or not numeric, it's not an ID
+// If the last part is 'index.php' or not numeric, check query param 'id'
 if ($eventId === 'index.php' || !is_numeric($eventId)) {
+    $eventId = $_GET['id'] ?? null;
+}
+if ($eventId && is_numeric($eventId)) {
+    $eventId = intval($eventId);
+} else {
     $eventId = null;
 }
 
@@ -42,7 +48,7 @@ try {
     
     switch ($method) {
         case 'GET':
-            handleGetEvents($pdo, $eventId);
+            handleGetEvents($pdo, $eventId, $currentAdmin);
             break;
             
         case 'POST':
@@ -72,13 +78,13 @@ try {
 /**
  * Handle GET requests for events
  */
-function handleGetEvents($pdo, $eventId) {
+function handleGetEvents($pdo, $eventId, $currentAdmin = null) {
     try {
         if ($eventId) {
             // Get single event
             $sql = "SELECT e.*, a.full_name as created_by_name 
                     FROM events e 
-                    JOIN admin_users a ON e.created_by = a.id 
+                    LEFT JOIN admin_users a ON e.created_by = a.id 
                     WHERE e.id = ?";
             $stmt = executeQuery($pdo, $sql, [$eventId]);
             $event = $stmt->fetch();
@@ -100,14 +106,17 @@ function handleGetEvents($pdo, $eventId) {
             $params = [];
             
             // Add filters based on query parameters
-            if (isset($_GET['type']) && !empty($_GET['type'])) {
+            if (isset($_GET['type']) && !empty($_GET['type']) && $_GET['type'] !== 'all') {
                 $where .= ' WHERE e.event_type = ?';
                 $params[] = $_GET['type'];
             }
             
-            if (isset($_GET['status']) && !empty($_GET['status'])) {
+            if (isset($_GET['status']) && !empty($_GET['status']) && $_GET['status'] !== 'all') {
                 $where .= ($where ? ' AND' : ' WHERE') . ' e.status = ?';
                 $params[] = $_GET['status'];
+            } elseif (!$currentAdmin) {
+                // Public visitors only see active events
+                $where .= ($where ? ' AND' : ' WHERE') . " e.status = 'active'";
             }
             
             if (isset($_GET['upcoming']) && $_GET['upcoming'] === 'true') {
@@ -153,7 +162,7 @@ function handleCreateEvent($pdo, $adminId) {
         }
         
         // Validate required fields
-        $required = ['title', 'event_date', 'start_time', 'end_time'];
+        $required = ['title', 'event_date'];
         foreach ($required as $field) {
             if (empty($input[$field])) {
                 sendJsonResponse([
@@ -162,14 +171,25 @@ function handleCreateEvent($pdo, $adminId) {
                 ], 400);
             }
         }
+
+        // Handle start_time and end_time with fallback defaults
+        $startTime = !empty($input['start_time']) ? trim($input['start_time']) : '09:00:00';
+        $endTime = !empty($input['end_time']) ? trim($input['end_time']) : (!empty($input['start_time']) ? trim($input['start_time']) : '17:00:00');
+
+        if (preg_match('/^\d{2}:\d{2}$/', $startTime)) {
+            $startTime .= ':00';
+        }
+        if (preg_match('/^\d{2}:\d{2}$/', $endTime)) {
+            $endTime .= ':00';
+        }
         
         // Sanitize and validate input
         $data = [
             'title' => sanitizeInput($input['title']),
             'description' => sanitizeInput($input['description'] ?? ''),
             'event_date' => $input['event_date'],
-            'start_time' => $input['start_time'],
-            'end_time' => $input['end_time'],
+            'start_time' => $startTime,
+            'end_time' => $endTime,
             'location' => sanitizeInput($input['location'] ?? ''),
             'event_type' => in_array($input['event_type'] ?? '', ['academic', 'sports', 'cultural', 'meeting', 'holiday', 'other']) 
                            ? $input['event_type'] : 'other',
@@ -177,6 +197,7 @@ function handleCreateEvent($pdo, $adminId) {
                        ? $input['status'] : 'active',
             'max_participants' => is_numeric($input['max_participants'] ?? '') ? intval($input['max_participants']) : null,
             'current_participants' => is_numeric($input['current_participants'] ?? '') ? intval($input['current_participants']) : 0,
+            'image_url' => sanitizeInput($input['image_url'] ?? ''),
             'created_by' => $adminId
         ];
         
@@ -191,14 +212,14 @@ function handleCreateEvent($pdo, $adminId) {
         
         // Insert event
         $sql = "INSERT INTO events (title, description, event_date, start_time, end_time, location, 
-                event_type, status, max_participants, current_participants, created_by) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                event_type, status, max_participants, current_participants, image_url, created_by) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         
         $params = [
             $data['title'], $data['description'], $data['event_date'], 
             $data['start_time'], $data['end_time'], $data['location'],
             $data['event_type'], $data['status'], $data['max_participants'],
-            $data['current_participants'], $data['created_by']
+            $data['current_participants'], $data['image_url'], $data['created_by']
         ];
         
         executeQuery($pdo, $sql, $params);
@@ -253,12 +274,12 @@ function handleUpdateEvent($pdo, $eventId, $adminId) {
         
         $allowedFields = [
             'title', 'description', 'event_date', 'start_time', 'end_time', 
-            'location', 'event_type', 'status', 'max_participants', 'current_participants'
+            'location', 'event_type', 'status', 'max_participants', 'current_participants', 'image_url'
         ];
         
         foreach ($allowedFields as $field) {
             if (isset($input[$field])) {
-                if (in_array($field, ['title', 'description', 'location'])) {
+                if (in_array($field, ['title', 'description', 'location', 'image_url'])) {
                     $updateFields[] = "$field = ?";
                     $params[] = sanitizeInput($input[$field]);
                 } elseif ($field === 'event_type') {

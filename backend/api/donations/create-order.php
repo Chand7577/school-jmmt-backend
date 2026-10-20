@@ -83,11 +83,12 @@ try {
     
     $razorpay_order = createRazorpayOrder($amount, $notes);
     
-    if (!$razorpay_order) {
+    if (!$razorpay_order || isset($razorpay_order['error'])) {
+        $errorMessage = $razorpay_order['error'] ?? 'Failed to connect to Razorpay';
         http_response_code(500);
         echo json_encode([
             'success' => false,
-            'message' => 'Failed to create payment order. Please try again.'
+            'message' => 'Razorpay Error: ' . $errorMessage . '. Please check your Razorpay API keys in config/razorpay.php.'
         ]);
         exit();
     }

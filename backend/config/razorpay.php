@@ -4,14 +4,37 @@
  * Reads credentials from environment variables on Render, falling back to test keys.
  */
 
+// Load .env if present in root or parent
+if (!getenv('RAZORPAY_KEY_ID')) {
+    $envPaths = [__DIR__ . '/../../.env', __DIR__ . '/../.env', __DIR__ . '/.env'];
+    foreach ($envPaths as $envPath) {
+        if (file_exists($envPath)) {
+            $lines = file($envPath, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+            foreach ($lines as $line) {
+                if (strpos(trim($line), '#') === 0) continue;
+                if (strpos($line, '=') !== false) {
+                    list($key, $val) = explode('=', $line, 2);
+                    $key = trim($key);
+                    $val = trim($val, " \t\n\r\0\x0B\"'");
+                    if (!getenv($key)) {
+                        putenv("$key=$val");
+                        $_ENV[$key] = $val;
+                    }
+                }
+            }
+            break;
+        }
+    }
+}
+
 define('RAZORPAY_KEY_ID', getenv('RAZORPAY_KEY_ID') ?: 'rzp_test_TgVF1zHuVFwoxx');
 define('RAZORPAY_KEY_SECRET', getenv('RAZORPAY_KEY_SECRET') ?: 'nIAaXwz2xERx4kGjvZ2KRzJA');
 define('RAZORPAY_WEBHOOK_SECRET', getenv('RAZORPAY_WEBHOOK_SECRET') ?: 'jmmt_webhook_secret_2026');
 
 define('RAZORPAY_CURRENCY', 'INR');
-define('RAZORPAY_NAME', 'JMMS School');
+define('RAZORPAY_NAME', 'John Martyn Memorial School');
 define('RAZORPAY_DESCRIPTION', 'Donation for John Martyn Memorial School');
-define('RAZORPAY_LOGO', 'https://jmmt.org.in/wp-content/uploads/2022/07/jmms-logo-7-1-e1525669143761-1.webp');
+define('RAZORPAY_LOGO', getenv('RAZORPAY_LOGO') ?: '/favicon.png');
 define('RAZORPAY_THEME_COLOR', '#E8B923');
 
 function getRazorpayCredentials() {
@@ -73,8 +96,10 @@ function createRazorpayOrder($amount, $notes = []) {
         return json_decode($response, true);
     }
     
+    $errData = json_decode($response, true);
+    $errDesc = $errData['error']['description'] ?? ($curl_error ?: "HTTP $http_code");
     error_log("Razorpay Order Failed (HTTP $http_code): " . ($curl_error ?: $response));
-    return false;
+    return ['error' => $errDesc, 'http_code' => $http_code];
 }
 
 function fetchRazorpayPayment($payment_id) {
