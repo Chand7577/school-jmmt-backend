@@ -27,24 +27,31 @@ def main():
     ftp.set_pasv(True)
     print("✅ Authenticated successfully!")
 
-    # Check root contents to avoid double public_html nesting
+    current_pwd = ftp.pwd()
+    print(f"📂 Initial FTP directory: {current_pwd}")
+
     try:
         initial_items = ftp.nlst()
     except Exception:
         initial_items = []
     print(f"📋 Initial directory items: {initial_items}")
 
-    # Determine base directory
-    if 'public_html' in initial_items and 'index.html' not in initial_items:
+    # Determine correct base directory
+    # If the FTP user was placed directly in /public_html, STAY THERE!
+    if current_pwd == '/public_html' or current_pwd.endswith('/public_html'):
+        base_dir = current_pwd
+        print(f"📂 Already at website root: {base_dir} (will NOT nest into public_html)")
+    elif 'public_html' in initial_items:
         try:
             ftp.cwd('public_html')
-            print(f"📂 Navigated into public_html: {ftp.pwd()}")
+            base_dir = ftp.pwd()
+            print(f"📂 Navigated into public_html: {base_dir}")
         except Exception as e:
+            base_dir = current_pwd
             print(f"⚠️ Could not cwd to public_html: {e}")
     else:
-        print(f"📂 Staying at root directory: {ftp.pwd()}")
-
-    base_dir = ftp.pwd()
+        base_dir = current_pwd
+        print(f"📂 Staying at root directory: {base_dir}")
 
     local_dir = 'deploy_out'
     if not os.path.isdir(local_dir):
@@ -93,7 +100,7 @@ def main():
         pass
 
     ftp.quit()
-    print(f"\n🎉 Successfully deployed {total_uploaded} files to Hostinger!")
+    print(f"\n🎉 Successfully deployed {total_uploaded} files to Hostinger ({base_dir})!")
 
 if __name__ == '__main__':
     main()
