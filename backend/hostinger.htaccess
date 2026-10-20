@@ -2,7 +2,8 @@
 # Hostinger Apache Configuration for JMMS School (React + PHP)
 # ==============================================================
 
-Options -Indexes
+DirectoryIndex index.html index.php
+Options -Indexes +FollowSymLinks
 RewriteEngine On
 
 # 1. Protect sensitive configuration and PHP includes from direct URL access

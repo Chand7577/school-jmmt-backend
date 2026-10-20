@@ -27,14 +27,24 @@ def main():
     ftp.set_pasv(True)
     print("✅ Authenticated successfully!")
 
-    # Navigate into public_html if it exists
+    # Check root contents to avoid double public_html nesting
     try:
-        ftp.cwd('public_html')
-        base_dir = ftp.pwd()
-        print(f"📂 Target remote directory: {base_dir}")
-    except Exception as e:
-        base_dir = ftp.pwd()
-        print(f"📂 Current directory: {base_dir} (could not cwd to public_html: {e})")
+        initial_items = ftp.nlst()
+    except Exception:
+        initial_items = []
+    print(f"📋 Initial directory items: {initial_items}")
+
+    # Determine base directory
+    if 'public_html' in initial_items and 'index.html' not in initial_items:
+        try:
+            ftp.cwd('public_html')
+            print(f"📂 Navigated into public_html: {ftp.pwd()}")
+        except Exception as e:
+            print(f"⚠️ Could not cwd to public_html: {e}")
+    else:
+        print(f"📂 Staying at root directory: {ftp.pwd()}")
+
+    base_dir = ftp.pwd()
 
     local_dir = 'deploy_out'
     if not os.path.isdir(local_dir):
@@ -46,7 +56,7 @@ def main():
     for root, dirs, files in os.walk(local_dir):
         rel_dir = os.path.relpath(root, local_dir)
 
-        # Navigate from base_dir to the target remote directory
+        # Navigate from base_dir to target remote directory
         ftp.cwd(base_dir)
         if rel_dir != '.':
             for part in rel_dir.replace('\\', '/').split('/'):
@@ -57,6 +67,10 @@ def main():
                 except Exception:
                     pass  # Directory already exists
                 ftp.cwd(part)
+                try:
+                    ftp.sendcmd(f"SITE CHMOD 755 {part}")
+                except Exception:
+                    pass
 
         for f in files:
             local_file_path = os.path.join(root, f)
@@ -65,10 +79,21 @@ def main():
             print(f"⬆️  Uploading: {display_path} ({file_size} bytes)...")
             with open(local_file_path, 'rb') as fp:
                 ftp.storbinary(f"STOR {f}", fp)
+            try:
+                ftp.sendcmd(f"SITE CHMOD 644 {f}")
+            except Exception:
+                pass
             total_uploaded += 1
 
+    ftp.cwd(base_dir)
+    try:
+        deployed_items = ftp.nlst()
+        print(f"\n📋 Verified deployed root ({base_dir}) contents: {deployed_items}")
+    except Exception:
+        pass
+
     ftp.quit()
-    print(f"\n🎉 Successfully uploaded {total_uploaded} files to Hostinger!")
+    print(f"\n🎉 Successfully deployed {total_uploaded} files to Hostinger!")
 
 if __name__ == '__main__':
     main()

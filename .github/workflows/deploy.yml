@@ -40,7 +40,7 @@ jobs:
           cp -r backend/api deploy_out/
           cp -r backend/config deploy_out/
           cp -r backend/includes deploy_out/
-          cp backend/index.php deploy_out/index.php 2>/dev/null || true
+          cp backend/index.php deploy_out/api/index.php 2>/dev/null || true
           # 3. Apply Hostinger Apache rewrite rules
           if [ -f backend/hostinger.htaccess ]; then
             cp backend/hostinger.htaccess deploy_out/.htaccess
