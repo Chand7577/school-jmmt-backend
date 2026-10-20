@@ -48,13 +48,21 @@ jobs:
             cp backend/.htaccess deploy_out/.htaccess
           fi
 
-      - name: 📤 Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_SERVER }}
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
-          local-dir: ./deploy_out/
-          server-dir: public_html/
+      - name: 📤 Deploy to Hostinger via LFTP
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+          # Strip any leading protocol or trailing slashes from server IP/hostname
+          CLEAN_HOST=$(echo "$FTP_SERVER" | sed -e 's|^[^/]*//||' -e 's|/.*$||')
+          lftp -e "
+            set ssl:verify-certificate no;
+            set ftp:ssl-allow yes;
+            set ftp:passive-mode true;
+            set net:timeout 30;
+            set net:max-retries 3;
+            mirror --reverse --verbose ./deploy_out /public_html;
+            bye
+          " -u "$FTP_USERNAME","$FTP_PASSWORD" "$CLEAN_HOST"
