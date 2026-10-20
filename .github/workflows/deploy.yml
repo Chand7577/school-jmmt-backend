@@ -62,9 +62,11 @@ jobs:
           set ftp:passive-mode true
           set net:timeout 30
           set net:max-retries 3
-          open -u "$FTP_USERNAME","$FTP_PASSWORD" "$CLEAN_HOST"
-          cd public_html || true
+          open ftp://$CLEAN_HOST
+          user "$FTP_USERNAME" "$FTP_PASSWORD"
+          cd public_html
           mirror --reverse --verbose ./deploy_out .
-          quit
+          bye
           EOF
+          sed -i 's/^[ \t]*//' deploy.lftp
           lftp -f deploy.lftp
