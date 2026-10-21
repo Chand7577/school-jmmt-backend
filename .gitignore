@@ -29,3 +29,9 @@ pnpm-debug.log*
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
