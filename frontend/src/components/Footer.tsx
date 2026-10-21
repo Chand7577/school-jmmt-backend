@@ -75,7 +75,7 @@ const Footer = () => {
                       href="#teachers"
                       className="hover:text-[#E8B923] transition-colors text-white/90 font-medium hover:translate-x-1 inline-block duration-150"
                     >
-                      Our Teachers & Leadership
+                      Academic Leadership & Faculty
                     </a>
                   </li>
                   <li>

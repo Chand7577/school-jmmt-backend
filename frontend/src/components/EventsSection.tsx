@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { schoolEventsData, SchoolEvent } from "../data/eventsData";
 import { useGsapReveal } from "../hooks/useGsapReveal";
@@ -12,15 +12,19 @@ import {
 } from "./ui/Icons";
 
 const EventsSection: React.FC = () => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [events, setEvents] = useState<SchoolEvent[]>(schoolEventsData);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [itemsPerView, setItemsPerView] = useState(3);
+  const [isPaused, setIsPaused] = useState(false);
+  const touchStartXRef = useRef<number | null>(null);
 
+  // Load events from DB if available, otherwise keep our full 8 dummy events
   useEffect(() => {
     const loadEvents = async () => {
       try {
         const res = await fetch(`${API_BASE_URL}/api/events/index.php?status=active`);
         const json = await res.json();
-        if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+        if (json.success && Array.isArray(json.data) && json.data.length >= 3) {
           const liveFormatted: SchoolEvent[] = json.data.map((e: any) => {
             const d = new Date(e.event_date);
             const slug = e.title
@@ -43,166 +47,257 @@ const EventsSection: React.FC = () => {
               badgeColor: "bg-amber-100 text-amber-800",
             };
           });
-          // Use live events directly from database
           setEvents(liveFormatted);
         }
       } catch (err) {
         console.warn("Could not load dynamic events for homepage:", err);
       }
     };
-
     loadEvents();
   }, []);
 
-  const sectionRef = useGsapReveal({
-    targets: [
-      { selector: ".events-header", variant: "fadeUp", duration: 0.6 },
-      { selector: ".events-carousel-container", variant: "fadeUp", duration: 0.7, delay: 0.15 },
-    ],
-    triggerStart: "top 95%",
-  });
+  // Update items per view based on responsive breakpoints
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setItemsPerView(1);
+      } else if (window.innerWidth < 1024) {
+        setItemsPerView(2);
+      } else {
+        setItemsPerView(3);
+      }
+    };
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
-  const scroll = (direction: "left" | "right") => {
-    if (scrollContainerRef.current) {
-      const scrollAmount = scrollContainerRef.current.clientWidth * 0.75;
-      scrollContainerRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
-        behavior: "smooth",
-      });
-    }
+  // Maximum valid slide offset
+  const maxIndex = Math.max(0, events.length - itemsPerView);
+
+  // Auto-scroll ticker: advances every 3.8s, pauses on hover
+  useEffect(() => {
+    if (isPaused || maxIndex <= 0) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    }, 3800);
+    return () => clearInterval(timer);
+  }, [isPaused, maxIndex]);
+
+  const handlePrev = useCallback(() => {
+    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+  }, [maxIndex]);
+
+  const handleNext = useCallback(() => {
+    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+  }, [maxIndex]);
+
+  // Touch swipe support for mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
   };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartXRef.current === null) return;
+    const diff = touchStartXRef.current - e.changedTouches[0].clientX;
+    if (diff > 40) {
+      handleNext();
+    } else if (diff < -40) {
+      handlePrev();
+    }
+    touchStartXRef.current = null;
+  };
+
+  const sectionRef = useGsapReveal<HTMLDivElement>({
+    targets: [
+      { selector: ".events-header", variant: "fadeUp", duration: 0.7 },
+      { selector: ".events-carousel-track", variant: "fadeUp", duration: 0.8, delay: 0.15 },
+    ],
+    triggerStart: "top 90%",
+  });
 
   return (
     <section
       id="events"
       ref={sectionRef}
-      className="py-16 lg:py-24 bg-[#FDFBF7] relative overflow-hidden"
+      className="relative bg-[#FDFBF7] py-24 lg:py-32 overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Header */}
-        <div className="events-header flex flex-col md:flex-row md:items-end justify-between mb-10 lg:mb-12 gap-6">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#1E2A44]/5 border border-[#1E2A44]/10 text-xs font-bold text-[#1E2A44] mb-3">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E8B923]"></span>
-              <span className="tracking-wide">CHAPTER 06 • CAMPUS LIFE &amp; CELEBRATIONS</span>
+      {/* Ambient background glow */}
+      <div className="absolute top-1/2 left-1/3 -translate-y-1/2 w-[800px] h-[500px] bg-gradient-to-tr from-[#E8B923]/5 via-amber-100/15 to-transparent rounded-full blur-[140px] pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
+        {/* Section Header: Editorial & Balanced */}
+        <div className="events-header flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-14 lg:mb-16">
+          <div className="space-y-4 max-w-2xl">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2.5">
+              <span className="w-6 h-px bg-[#E8B923]" />
+              <span className="text-[11px] font-bold tracking-[0.22em] text-[#1E2A44] uppercase">
+                Chapter 06 · Campus Life & Celebrations
+              </span>
             </div>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1E2A44] tracking-tight">
-              UPCOMING &amp; RECENT <span className="text-[#E8B923]">EVENTS</span>
+
+            {/* Headline */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-tight text-[#1E2A44] leading-[1.15]">
+              Celebrating curiosity through <br className="hidden sm:inline" />
+              <span className="font-black text-[#1E2A44]">
+                campus life & <span className="text-[#E8B923]">festivities.</span>
+              </span>
             </h2>
-            <p className="mt-3 text-sm sm:text-base text-[#1E2A44]/75 leading-relaxed">
-              Experience the vibrant spirit of John Martyn Memorial School
-              through sports, field visits, and co-curricular festivities.
+
+            <p className="text-sm sm:text-[15px] text-[#1E2A44]/70 leading-relaxed font-normal pt-1 max-w-xl">
+              From traditional loom exhibitions and sports championships to classical Himalayan recitals, our students discover pride and joy in every event.
             </p>
           </div>
 
-          {/* Navigation Controls: Carousel Arrows & View All */}
-          <div className="flex items-center gap-3">
+          {/* Controls Bar */}
+          <div className="flex items-center gap-3 shrink-0">
+            {/* Navigation Buttons */}
             <div className="flex items-center gap-2">
               <button
-                onClick={() => scroll("left")}
-                aria-label="Previous events"
-                className="w-10 h-10 rounded-full border border-gray-200/80 bg-white hover:bg-gray-50 text-[#1E2A44] flex items-center justify-center transition-colors shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B923]"
+                onClick={handlePrev}
+                aria-label="Previous event"
+                className="w-10 h-10 rounded-full border border-[#1E2A44]/10 bg-white hover:bg-[#FDFBF7] text-[#1E2A44] flex items-center justify-center transition-all shadow-sm hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B923]"
               >
-                <ChevronLeft size={20} />
+                <ChevronLeft size={18} />
               </button>
               <button
-                onClick={() => scroll("right")}
-                aria-label="Next events"
-                className="w-10 h-10 rounded-full border border-gray-200/80 bg-white hover:bg-gray-50 text-[#1E2A44] flex items-center justify-center transition-colors shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B923]"
+                onClick={handleNext}
+                aria-label="Next event"
+                className="w-10 h-10 rounded-full border border-[#1E2A44]/10 bg-white hover:bg-[#FDFBF7] text-[#1E2A44] flex items-center justify-center transition-all shadow-sm hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B923]"
               >
-                <ChevronRight size={20} />
+                <ChevronRight size={18} />
               </button>
-            </div>
 
-            <Link
-              to="/school-events"
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1E2A44] text-white text-xs font-bold hover:bg-[#2b3b5e] transition-colors shadow-sm group focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B923]"
-            >
-              <span>All Events</span>
-              <ArrowRight
-                size={14}
-                className="group-hover:translate-x-1 transition-transform"
-              />
-            </Link>
+              <Link
+                to="/school-events"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#1E2A44] text-white text-xs font-bold hover:bg-[#28385a] transition-all shadow-sm ml-2 group"
+              >
+                <span>All Events</span>
+                <ArrowRight
+                  size={13}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+              </Link>
+            </div>
           </div>
         </div>
 
-        {/* Horizontal Scroll-Snap Carousel */}
-        <div className="events-carousel-container relative -mx-4 sm:-mx-6 lg:-mx-8 px-4 sm:px-6 lg:px-8">
+        {/* Three-Column Auto-scrolling Track */}
+        <div
+          className="events-carousel-track overflow-hidden -mx-3"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+        >
           <div
-            ref={scrollContainerRef}
-            className="flex gap-6 overflow-x-auto pb-6 pt-2 snap-x snap-mandatory scroll-smooth focus:outline-none no-scrollbar"
+            className="flex transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
+            style={{
+              transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
+            }}
           >
             {events.map((evt) => (
               <div
                 key={evt.id}
-                className="snap-start shrink-0 w-[88vw] sm:w-[380px] md:w-[400px] lg:w-[410px] bg-white rounded-3xl p-6 sm:p-7 border border-gray-200/80 shadow-md hover:shadow-xl transition-all duration-300 flex flex-col justify-between group"
+                className="shrink-0 px-3"
+                style={{ width: `${100 / itemsPerView}%` }}
               >
-                <div>
-                  <div className="flex items-start justify-between gap-4 mb-5">
-                    {/* Date Block */}
-                    <div className="flex flex-col items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-[#1E2A44] text-white shrink-0 shadow-md">
-                      <span className="text-[11px] font-bold uppercase text-amber-300 leading-none">
-                        {evt.month}
-                      </span>
-                      <span className="text-xl sm:text-2xl font-black leading-tight mt-0.5">
-                        {evt.day}
-                      </span>
-                      <span className="text-[10px] text-white/60 leading-none">
-                        {evt.year}
-                      </span>
-                    </div>
+                <article className="h-full bg-white rounded-3xl border border-[#1E2A44]/10 shadow-[0_4px_24px_rgba(30,42,68,0.04)] hover:shadow-xl hover:border-[#1E2A44]/20 transition-all duration-500 overflow-hidden flex flex-col justify-between group">
+                  <div>
+                    {/* Event Image & Floating Badges */}
+                    <div className="relative h-56 w-full overflow-hidden bg-[#162035]">
+                      <img
+                        src={evt.image}
+                        alt={evt.title}
+                        className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-[#1E2A44]/75 via-transparent to-transparent pointer-events-none" />
 
-                    {/* Category & Time */}
-                    <div className="text-right space-y-1">
-                      <span className={`text-[11px] font-bold px-3 py-1 rounded-full inline-block ${evt.badgeColor}`}>
-                        {evt.category}
-                      </span>
+                      {/* Date Badge (Top Left) */}
+                      <div className="absolute top-4 left-4 bg-[#1E2A44]/95 text-white backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-lg border border-white/10 flex items-center gap-2">
+                        <span className="text-xl font-black text-amber-300 leading-none">
+                          {evt.day}
+                        </span>
+                        <div className="flex flex-col text-left leading-none">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-white/90">
+                            {evt.month}
+                          </span>
+                          <span className="text-[9px] text-white/50">
+                            {evt.year}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Category Pill (Top Right) */}
+                      <div className="absolute top-4 right-4">
+                        <span className="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-[#1E2A44] backdrop-blur-md shadow-sm">
+                          {evt.category}
+                        </span>
+                      </div>
+
+                      {/* Time pill (Bottom Left of photo) */}
                       {evt.time && (
-                        <div className="flex items-center justify-end gap-1 text-[11px] text-gray-500 font-medium">
-                          <Clock size={12} />
+                        <div className="absolute bottom-3 left-4 flex items-center gap-1.5 text-[11px] font-semibold text-white/90">
+                          <Clock size={12} className="text-amber-300" />
                           <span>{evt.time}</span>
                         </div>
                       )}
                     </div>
+
+                    {/* Card Content */}
+                    <div className="p-7">
+                      <h3 className="text-lg sm:text-xl font-bold text-[#1E2A44] leading-snug group-hover:text-[#E8B923] transition-colors line-clamp-2">
+                        <Link to={`/school-events/${evt.slug}`}>
+                          {evt.title}
+                        </Link>
+                      </h3>
+
+                      <p className="text-xs sm:text-sm text-[#1E2A44]/70 leading-relaxed line-clamp-3 mt-3">
+                        {evt.summary}
+                      </p>
+                    </div>
                   </div>
 
-                  {/* Title & Summary */}
-                  <h3 className="text-lg sm:text-xl font-black text-[#1E2A44] mb-2 leading-snug group-hover:text-[#1E2A44] transition-colors">
+                  {/* Card Footer: Location & Arrow Link */}
+                  <div className="px-7 pb-7 pt-4 border-t border-[#1E2A44]/5 flex items-center justify-between text-xs text-[#1E2A44]/70">
+                    <span className="flex items-center gap-1.5 truncate max-w-[190px]">
+                      <MapPin size={13} className="shrink-0 text-[#E8B923]" />
+                      <span className="truncate">{evt.location}</span>
+                    </span>
+
                     <Link
                       to={`/school-events/${evt.slug}`}
-                      className="hover:underline focus:outline-none focus-visible:underline"
+                      className="inline-flex items-center gap-1 font-bold text-[#1E2A44] hover:text-[#E8B923] transition-colors shrink-0 group/link"
                     >
-                      {evt.title}
+                      <span>Explore</span>
+                      <ArrowRight
+                        size={13}
+                        className="group-hover/link:translate-x-1 transition-transform"
+                      />
                     </Link>
-                  </h3>
-
-                  <p className="text-xs sm:text-sm text-[#1E2A44]/75 leading-relaxed line-clamp-3 mb-4">
-                    {evt.summary}
-                  </p>
-                </div>
-
-                {/* Footer details: Location & Read More */}
-                <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-1.5 font-medium text-gray-500 truncate max-w-[200px]">
-                    <MapPin size={13} className="shrink-0 text-gray-400" />
-                    <span className="truncate">{evt.location}</span>
-                  </span>
-                  
-                  <Link
-                    to={`/school-events/${evt.slug}`}
-                    className="inline-flex items-center gap-1 text-[#1E2A44] font-black hover:text-[#E8B923] transition-colors group/link shrink-0"
-                  >
-                    <span>Read More</span>
-                    <ArrowRight
-                      size={13}
-                      className="group-hover/link:translate-x-1 transition-transform"
-                    />
-                  </Link>
-                </div>
+                  </div>
+                </article>
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Carousel Pagination Progress Bar */}
+        <div className="mt-8 flex items-center justify-center gap-1.5">
+          {Array.from({ length: maxIndex + 1 }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentIndex(i)}
+              aria-label={`Go to slide ${i + 1}`}
+              className={`h-1.5 rounded-full transition-all duration-300 ${
+                currentIndex === i
+                  ? "w-8 bg-[#E8B923]"
+                  : "w-2 bg-[#1E2A44]/15 hover:bg-[#1E2A44]/30"
+              }`}
+            />
+          ))}
         </div>
       </div>
     </section>

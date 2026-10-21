@@ -5,181 +5,222 @@ import {
   Sparkles,
   GraduationCap,
   Handshake,
-  Heart,
   ArrowRight,
+  ShieldCheck,
+  Check,
 } from "./ui/Icons";
 
 interface Supporter {
   id: string;
+  index: string;
   name: string;
   type: string;
   contribution: string;
+  impactBadge: string;
   IconComponent: React.ComponentType<{ className?: string; size?: number }>;
 }
 
 const supportersList: Supporter[] = [
   {
     id: "lal-family",
+    index: "01",
     name: "Lal Family Foundation",
     type: "Principal Philanthropic Benefactor",
     contribution:
-      "Endowing student educational sponsorships, midday meals, and primary school facilities.",
+      "Endowing direct student educational sponsorships, balanced mid-day meals, and permanent primary school facilities in Salangaon.",
+    impactBadge: "Core Endowments · Student Nutrition",
     IconComponent: Landmark,
   },
   {
     id: "hema-mahindra",
+    index: "02",
     name: "Hemchand Mahindra Foundation",
     type: "Key Institutional Sponsor",
     contribution:
-      "Supporting child welfare programs, educational materials, and skill workshops.",
+      "Underwriting comprehensive child welfare programs, classroom learning resources, craft materials, and vocational workshops.",
+    impactBadge: "Child Welfare · Vocational Skill Labs",
     IconComponent: Sparkles,
   },
   {
     id: "dsobs",
-    name: "Doon School Old Boys Society (DSOBS)",
+    index: "03",
+    name: "Doon School Old Boys Society",
     type: "Honorary Patron Organization",
     contribution:
-      "Providing merit scholarships, sports equipment, and continuing alumni mentorship.",
+      "Providing merit scholarships, sports equipment, campus infrastructure, and continuous alumni mentorship.",
+    impactBadge: "Merit Scholarships · Sports Mentorship",
     IconComponent: GraduationCap,
   },
   {
     id: "individual-patrons",
-    name: "Patrons & Individual Benefactors",
-    type: "Global & Village Well-Wishers",
+    index: "04",
+    name: "Patrons & Global Benefactors",
+    type: "Individual & Village Well-Wishers",
     contribution:
-      "Funding library book acquisitions, winter uniform drives, and classroom technology.",
+      "Funding library book acquisitions, seasonal winter uniform drives, healthcare camps, and classroom technology.",
+    impactBadge: "Library Volumes · Uniform Drives",
     IconComponent: Handshake,
   },
 ];
 
-const supportersTargets = [
-  { selector: ".supporters-header", variant: "fadeUp" as const, duration: 0.6 },
-  { selector: ".supporters-strip", variant: "fadeUp" as const, duration: 0.65, delay: 0.15 },
-  { selector: ".supporters-cta", variant: "fadeUp" as const, duration: 0.6, delay: 0.3 },
-];
-
 const SupportersSection: React.FC = () => {
-  const [activeSupporter, setActiveSupporter] = useState<string | null>(null);
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
 
-  const sectionRef = useGsapReveal({
-    targets: supportersTargets,
-    triggerStart: "top 95%",
-    toggleActions: "play none none none",
+  const sectionRef = useGsapReveal<HTMLDivElement>({
+    targets: [
+      { selector: ".supporters-left", variant: "fadeUp", duration: 0.7 },
+      { selector: ".supporters-right", variant: "fadeUp", duration: 0.8, delay: 0.15 },
+    ],
+    triggerStart: "top 90%",
   });
-
-  const selectedItem = supportersList.find((s) => s.id === activeSupporter);
 
   return (
     <section
       id="supporters"
       ref={sectionRef}
-      className="py-16 lg:py-24 bg-[#0f1b3d] text-white relative overflow-hidden"
+      className="relative bg-[#1E2A44] text-white py-24 lg:py-32 overflow-hidden"
     >
-      {/* Background ambient lighting */}
-      <div className="absolute top-0 right-1/4 w-96 h-96 bg-[#E8B923]/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-10 w-80 h-80 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
+      {/* Subtle architectural ambient light */}
+      <div className="absolute top-0 right-1/4 w-[700px] h-[500px] bg-[#E8B923]/6 rounded-full blur-[140px] pointer-events-none -translate-y-1/2" />
+      <div className="absolute bottom-0 left-10 w-[600px] h-[400px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none translate-y-1/3" />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="supporters-header text-center max-w-3xl mx-auto mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 border border-white/15 text-amber-300 text-xs font-bold tracking-wide mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E8B923]"></span>
-            <span>CHAPTER 07 • PARTNERS IN CHILD UPLIFTMENT</span>
+      {/* Thin gold top hairline divider */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#E8B923]/30 to-transparent" />
+
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
+        {/* Asymmetric Split Layout: Left Anchor & Right Horizontal Ledger */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          
+          {/* ── LEFT COLUMN (5 Cols): The Institutional Anchor & Pledge ── */}
+          <div className="supporters-left lg:col-span-5 lg:sticky lg:top-28 space-y-8">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2.5">
+              <span className="w-6 h-px bg-[#E8B923]" />
+              <span className="text-[11px] font-bold tracking-[0.22em] text-[#E8B923] uppercase">
+                Chapter 07 · Patrons & Benefactors
+              </span>
+            </div>
+
+            {/* Headline */}
+            <div className="space-y-2">
+              <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-extralight tracking-tight text-white/90 leading-[1.15]">
+                Sustaining generations of
+              </h2>
+              <h2 className="text-3xl sm:text-4xl lg:text-[44px] font-black text-[#E8B923] tracking-tight leading-[1.15]">
+                rural young learners.
+              </h2>
+            </div>
+
+            {/* Narrative description */}
+            <p className="text-sm sm:text-[15px] text-white/60 leading-relaxed font-light">
+              Our school charges zero tuition. Every mid-day meal, uniform, book, and classroom facility is sustained through the enduring generosity of our institutional partners and global well-wishers.
+            </p>
+
+            {/* The Zero-Overhead Trust Guarantee Box */}
+            <div className="p-6 sm:p-7 rounded-2xl bg-white/[0.04] border border-white/10 backdrop-blur-sm space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-[#E8B923] text-[#1E2A44] flex items-center justify-center shrink-0">
+                  <ShieldCheck size={20} />
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#E8B923]">
+                    100% Direct Student Aid
+                  </p>
+                  <p className="text-sm font-bold text-white mt-0.5">
+                    Zero Overhead Deductions
+                  </p>
+                </div>
+              </div>
+
+              <p className="text-xs text-white/60 leading-relaxed font-light">
+                All educational sponsorships flow directly to student nutrition, classroom learning resources, uniforms, and specialized teacher salaries.
+              </p>
+
+              <div className="pt-2">
+                <a
+                  href="#contact"
+                  className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-full bg-[#E8B923] text-[#1E2A44] font-bold text-xs hover:bg-amber-400 transition-all shadow-lg shadow-[#E8B923]/20 group"
+                >
+                  <span>Sponsor a Student</span>
+                  <ArrowRight
+                    size={13}
+                    className="group-hover:translate-x-1 transition-transform"
+                  />
+                </a>
+              </div>
+            </div>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
-            OUR <span className="text-[#E8B923]">SUPPORTERS</span>
-          </h2>
-          <p className="mt-4 text-sm sm:text-base text-white/75 leading-relaxed font-normal">
-            <strong className="text-white font-semibold">JMMS is supported by prominent organisations</strong>,{" "}
-            providing sponsorships to our students and sustaining our mission to deliver free, high-quality primary education in rural Dehradun.
-          </p>
-        </div>
 
-        {/* Quiet Understated Logo Strip */}
-        <div className="supporters-strip max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 items-center justify-center">
+          {/* ── RIGHT COLUMN (7 Cols): The Clean Horizontal Ledger ── */}
+          <div className="supporters-right lg:col-span-7 flex flex-col divide-y divide-white/10 border-t border-b border-white/10">
             {supportersList.map((sup) => {
               const Icon = sup.IconComponent;
-              const isHovered = activeSupporter === sup.id;
+              const isHovered = hoveredId === sup.id;
+
               return (
-                <button
+                <div
                   key={sup.id}
-                  onMouseEnter={() => setActiveSupporter(sup.id)}
-                  onMouseLeave={() => setActiveSupporter(null)}
-                  onClick={() =>
-                    setActiveSupporter(isHovered ? null : sup.id)
-                  }
-                  onFocus={() => setActiveSupporter(sup.id)}
-                  onBlur={() => setActiveSupporter(null)}
-                  aria-expanded={isHovered}
-                  className={`relative p-5 rounded-2xl flex flex-col items-center justify-center text-center transition-all duration-300 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#E8B923] ${
-                    isHovered
-                      ? "bg-white/10 text-white scale-105 shadow-lg"
-                      : "text-white/60 hover:text-white/90 hover:bg-white/5"
+                  onMouseEnter={() => setHoveredId(sup.id)}
+                  onMouseLeave={() => setHoveredId(null)}
+                  className={`relative py-8 sm:py-9 px-4 sm:px-6 transition-all duration-300 ${
+                    isHovered ? "bg-white/[0.04]" : "bg-transparent"
                   }`}
                 >
+                  {/* Left accent indicator on hover */}
                   <div
-                    className={`w-12 h-12 rounded-xl flex items-center justify-center mb-3 transition-colors ${
-                      isHovered
-                        ? "bg-[#E8B923] text-[#1E2A44]"
-                        : "bg-white/5 text-white/70"
+                    className={`absolute left-0 top-0 bottom-0 w-1 bg-[#E8B923] transition-opacity duration-300 ${
+                      isHovered ? "opacity-100" : "opacity-0"
                     }`}
-                  >
-                    <Icon size={22} />
+                  />
+
+                  <div className="flex flex-col sm:flex-row items-start justify-between gap-4 sm:gap-6">
+                    {/* Top Row: Index + Title */}
+                    <div className="space-y-1.5 flex-1">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-xs text-[#E8B923] font-bold tracking-widest">
+                          [{sup.index}]
+                        </span>
+                        <span className="text-[10px] font-mono tracking-widest uppercase text-white/40 font-semibold">
+                          {sup.type}
+                        </span>
+                      </div>
+
+                      <h3
+                        className={`text-xl sm:text-2xl font-bold tracking-tight transition-colors duration-300 ${
+                          isHovered ? "text-amber-300" : "text-white"
+                        }`}
+                      >
+                        {sup.name}
+                      </h3>
+                    </div>
+
+                    {/* Icon pill */}
+                    <div
+                      className={`w-10 h-10 rounded-xl border flex items-center justify-center shrink-0 transition-colors duration-300 ${
+                        isHovered
+                          ? "bg-[#E8B923] border-[#E8B923] text-[#1E2A44]"
+                          : "bg-white/5 border-white/10 text-white/60"
+                      }`}
+                    >
+                      <Icon size={18} />
+                    </div>
                   </div>
-                  <h3 className="text-xs sm:text-sm font-bold tracking-tight leading-snug">
-                    {sup.name}
-                  </h3>
-                  <span className="text-[10px] text-white/40 uppercase tracking-widest mt-1 block">
-                    {sup.type.split(" ")[0]} Partner
-                  </span>
-                </button>
+
+                  {/* Contribution Statement */}
+                  <p className="text-xs sm:text-sm text-white/65 leading-relaxed font-light mt-4 max-w-xl">
+                    {sup.contribution}
+                  </p>
+
+                  {/* Key impact areas badge */}
+                  <div className="mt-4 flex items-center gap-2 text-[11px] text-[#E8B923] font-medium tracking-wide">
+                    <Check size={13} className="shrink-0 text-emerald-400" />
+                    <span>{sup.impactBadge}</span>
+                  </div>
+                </div>
               );
             })}
           </div>
 
-          {/* Interactive Disclosure Bar (Reveals Sponsor Role & Contribution) */}
-          <div className="mt-6 min-h-[64px] flex items-center justify-center">
-            {selectedItem ? (
-              <div className="w-full max-w-2xl bg-white/10 border border-white/15 rounded-2xl p-4 text-center backdrop-blur-sm animate-fadeIn">
-                <span className="text-[11px] font-black uppercase tracking-wider text-[#E8B923] block mb-1">
-                  {selectedItem.type}
-                </span>
-                <p className="text-xs sm:text-sm text-white/90 leading-relaxed">
-                  {selectedItem.contribution}
-                </p>
-              </div>
-            ) : (
-              <p className="text-xs text-white/40 italic text-center">
-                Hover or tap any partner to view their contribution to Salangaon students
-              </p>
-            )}
-          </div>
-        </div>
-
-        {/* Signature Closing CTA Banner (The ONE signature banner preserved per Global Change #4) */}
-        <div className="supporters-cta mt-14 max-w-5xl mx-auto bg-gradient-to-r from-white/10 via-white/5 to-white/10 border border-white/15 rounded-3xl p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 backdrop-blur-md shadow-2xl">
-          <div className="flex items-center gap-4 text-left">
-            <div className="w-12 h-12 rounded-2xl bg-[#E8B923] text-[#1E2A44] flex items-center justify-center shrink-0 shadow-md">
-              <Heart size={24} />
-            </div>
-            <div>
-              <h4 className="text-base sm:text-lg font-bold text-white leading-tight">
-                100% of donations go directly to student sponsorships &amp; nutrition
-              </h4>
-              <p className="text-xs sm:text-sm text-white/70 mt-1">
-                Join our family of institutional partners and change a rural child's destiny today.
-              </p>
-            </div>
-          </div>
-
-          <a
-            href="#contact"
-            className="shrink-0 px-8 py-3.5 rounded-full bg-[#E8B923] text-[#1E2A44] font-black text-sm hover:bg-amber-400 shadow-xl shadow-[#E8B923]/25 hover:scale-105 active:scale-95 transition-all inline-flex items-center gap-2 focus:outline-none focus-visible:ring-2 focus-visible:ring-white"
-          >
-            <span>Sponsor a Student</span>
-            <ArrowRight size={15} />
-          </a>
         </div>
       </div>
     </section>

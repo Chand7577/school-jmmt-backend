@@ -10,7 +10,7 @@ const staggeredMenuItems = [
   { label: "Home", link: "/", isAnchor: false },
   { label: "About", link: "/about", isAnchor: false },
   { label: "What We Offer", link: "/#offers", isAnchor: true },
-  { label: "Our Teachers", link: "/#teachers", isAnchor: true },
+  { label: "Academic Leadership & Faculty", link: "/#teachers", isAnchor: true },
   { label: "Success Stories", link: "/success-stories", isAnchor: false },
   { label: "School Events", link: "/school-events", isAnchor: false },
   { label: "Newsletters", link: "/#newsletters", isAnchor: true },

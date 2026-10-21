@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import { useCountUp } from "../hooks/useCountUp";
 import { useGsapReveal } from "../hooks/useGsapReveal";
 import {
@@ -12,54 +13,66 @@ import {
 
 interface StatItem {
   id: string;
+  index: string;
   number: string;
   suffix?: string;
   label: string;
-  sublabel: string;
+  tag: string;
+  description: string;
   IconComponent: React.ComponentType<{ className?: string; size?: number }>;
 }
 
 const stats: StatItem[] = [
   {
     id: "history",
+    index: "01",
     number: "1985",
-    label: "Year of History",
-    sublabel: "4+ Decades of Trust",
+    label: "Year Founded",
+    tag: "40+ Years of Service",
+    description: "Four decades of providing free, enlightened primary education in rural Salangaon.",
     IconComponent: Landmark,
   },
   {
     id: "students",
+    index: "02",
     number: "194",
     label: "Active Students",
-    sublabel: "Rural Young Learners",
+    tag: "100% Tuition Free",
+    description: "Equal educational opportunity, nutritious mid-day meals, and uniforms for every child.",
     IconComponent: GraduationCap,
   },
   {
     id: "teachers",
+    index: "03",
     number: "14",
-    label: "Qualified Teachers",
-    sublabel: "Empathy & Mentorship",
+    label: "Dedicated Mentors",
+    tag: "1:14 Attention Ratio",
+    description: "Compassionate, qualified teachers fostering foundational knowledge and creative life skills.",
     IconComponent: Users,
   },
   {
     id: "books",
+    index: "04",
     number: "2,500",
     suffix: "+",
-    label: "Library Books",
-    sublabel: "Curated Knowledge",
+    label: "Library Volumes",
+    tag: "Curated Knowledge",
+    description: "A rich collection of storybooks, reference materials, and interactive learning tools.",
     IconComponent: BookOpen,
   },
   {
     id: "achievers",
+    index: "05",
     number: "50",
     suffix: "+",
-    label: "Success Achievers",
-    sublabel: "Secondary Transition",
+    label: "Alumni Transitions",
+    tag: "Secondary Excellence",
+    description: "Graduates accepted into leading secondary institutions across Uttarakhand and beyond.",
     IconComponent: Trophy,
   },
 ];
 
-/** Wraps useCountUp so each number animates independently */
+/** Wraps useCountUp so each number animates smoothly once visible */
 const AnimatedNumber = ({ value, enabled }: { value: string; enabled: boolean }) => {
   const display = useCountUp(value, 1600, enabled);
   return <>{display}</>;
@@ -68,16 +81,15 @@ const AnimatedNumber = ({ value, enabled }: { value: string; enabled: boolean })
 const Stats: React.FC = () => {
   const [isVisible, setIsVisible] = useState(false);
 
-  const sectionRef = useGsapReveal({
+  const sectionRef = useGsapReveal<HTMLDivElement>({
     targets: [
-      { selector: ".stats-header", variant: "fadeUp", duration: 0.6 },
-      { selector: ".stats-band", variant: "fadeUp", duration: 0.7, delay: 0.15 },
-      { selector: ".stats-footnote", variant: "fadeUp", duration: 0.5, delay: 0.3 },
+      { selector: ".stats-header", variant: "fadeUp", duration: 0.7 },
+      { selector: ".stats-grid", variant: "fadeUp", duration: 0.8, delay: 0.15 },
+      { selector: ".stats-footer", variant: "fadeUp", duration: 0.6, delay: 0.3 },
     ],
-    triggerStart: "top 95%",
+    triggerStart: "top 90%",
   });
 
-  // Watch visibility for count-up numbers
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
@@ -88,7 +100,7 @@ const Stats: React.FC = () => {
           observer.disconnect();
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.15 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -98,77 +110,117 @@ const Stats: React.FC = () => {
     <section
       id="stats"
       ref={sectionRef}
-      className="pt-16 pb-6 lg:pt-24 lg:pb-8 bg-[#FDFBF7] relative overflow-hidden"
+      className="relative bg-[#FDFBF7] py-24 lg:py-32 overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header & Intro Paragraph */}
-        <div className="stats-header text-center max-w-3xl mx-auto mb-12 lg:mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-[#1E2A44]/5 border border-[#1E2A44]/10 text-xs font-bold text-[#1E2A44] mb-3">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#E8B923]"></span>
-            <span className="tracking-wide">CHAPTER 01 • MEASURABLE IMPACT SINCE 1985</span>
-          </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#1E2A44] tracking-tight">
-            STRENGTH IN <span className="text-[#E8B923]">NUMBERS</span>
-          </h2>
-          <p className="mt-4 text-sm sm:text-base text-[#1E2A44]/80 leading-relaxed font-medium">
-            <strong className="text-[#1E2A44] font-semibold">Four Decades of Educational Service:</strong> Founded in 1985 to educate underprivileged children in rural Salangaon, John Martyn Memorial School has stood as an unwavering beacon of hope, values, and quality primary schooling for generations. Every statistic represents a child nurtured, a village household supported, and a brighter future built through grassroots dedication.
-          </p>
-        </div>
-      </div>
+      {/* Subtle background ambient warmth */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-gradient-to-tr from-[#E8B923]/5 via-amber-100/20 to-transparent rounded-full blur-[140px] pointer-events-none" />
 
-      {/* Full-width Horizontal Stat Band (Dark Navy Background, Full-Bleed) */}
-      <div className="stats-band w-full bg-[#1E2A44] text-white py-10 lg:py-12 shadow-2xl relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-white/[0.02] via-transparent to-white/[0.02] pointer-events-none" />
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-y-8 gap-x-4 lg:gap-y-0 lg:divide-x lg:divide-white/15">
-            {stats.map((item, index) => {
+      <div className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-16 relative z-10">
+        {/* Section Header: Editorial & Restrained */}
+        <div className="stats-header flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16 lg:mb-20">
+          <div className="space-y-4 max-w-2xl">
+            {/* Eyebrow */}
+            <div className="inline-flex items-center gap-2.5">
+              <span className="w-6 h-px bg-[#E8B923]" />
+              <span className="text-[11px] font-bold tracking-[0.22em] text-[#1E2A44] uppercase">
+                Chapter 01 · Measurable Impact
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extralight tracking-tight text-[#1E2A44] leading-[1.15]">
+              Four decades of quiet, <br className="hidden sm:inline" />
+              <span className="font-black text-[#1E2A44]">
+                meaningful <span className="text-[#E8B923]">progress.</span>
+              </span>
+            </h2>
+          </div>
+
+          {/* Subtext */}
+          <div className="max-w-md lg:pb-1">
+            <p className="text-sm sm:text-[15px] text-[#1E2A44]/70 leading-relaxed font-normal">
+              At John Martyn Memorial School, every figure represents a child in
+              Salangaon given the foundational education, dignity, and practical
+              skills to shape their own future.
+            </p>
+          </div>
+        </div>
+
+        {/* Five-Metric Modular Grid */}
+        <div className="stats-grid bg-white rounded-3xl border border-[#1E2A44]/10 shadow-[0_4px_24px_rgba(30,42,68,0.04)] overflow-hidden">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 divide-y sm:divide-y-0 sm:divide-x divide-[#1E2A44]/10">
+            {stats.map((item, idx) => {
               const Icon = item.IconComponent;
               return (
                 <div
                   key={item.id}
-                  className={`flex flex-col items-center text-center px-2 sm:px-4 lg:px-6 ${
-                    index === 4 ? "col-span-2 sm:col-span-1" : ""
+                  className={`group relative p-7 sm:p-8 flex flex-col justify-between transition-colors duration-300 hover:bg-[#FDFBF7]/60 ${
+                    idx === 4 ? "sm:col-span-2 lg:col-span-1" : ""
                   }`}
                 >
-                  <div className="inline-flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 text-amber-300 mb-3">
-                    <Icon size={18} />
-                  </div>
-                  <div className="flex items-baseline justify-center gap-0.5">
-                    <span className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
-                      <AnimatedNumber value={item.number} enabled={isVisible} />
-                    </span>
-                    {item.suffix && (
-                      <span className="text-xl sm:text-2xl lg:text-3xl font-black text-[#E8B923]">
-                        {item.suffix}
+                  {/* Subtle hover accent line at top */}
+                  <div className="absolute top-0 left-0 right-0 h-0.5 bg-transparent group-hover:bg-[#E8B923] transition-colors duration-300" />
+
+                  {/* Top: Index & Icon */}
+                  <div>
+                    <div className="flex items-center justify-between text-[#1E2A44]/30 mb-8">
+                      <span className="text-[11px] font-mono tracking-widest text-[#1E2A44]/40 font-bold">
+                        {item.index}
                       </span>
-                    )}
+                      <div className="w-8 h-8 rounded-lg bg-[#1E2A44]/5 flex items-center justify-center text-[#1E2A44]/70 group-hover:text-[#1E2A44] group-hover:bg-[#E8B923]/15 transition-colors">
+                        <Icon size={16} />
+                      </div>
+                    </div>
+
+                    {/* Number */}
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="text-4xl lg:text-[42px] xl:text-[46px] font-black text-[#1E2A44] tracking-tight leading-none">
+                        <AnimatedNumber value={item.number} enabled={isVisible} />
+                      </span>
+                      {item.suffix && (
+                        <span className="text-2xl lg:text-3xl font-black text-[#E8B923]">
+                          {item.suffix}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Label */}
+                    <h3 className="text-base font-bold text-[#1E2A44] mt-3 leading-snug">
+                      {item.label}
+                    </h3>
+
+                    {/* Micro Tag */}
+                    <p className="text-[11px] font-bold text-[#E8B923] uppercase tracking-wider mt-1">
+                      {item.tag}
+                    </p>
                   </div>
-                  <h3 className="text-sm font-bold text-white/95 mt-2 tracking-wide">
-                    {item.label}
-                  </h3>
-                  <p className="text-xs text-white/60 mt-0.5">
-                    {item.sublabel}
+
+                  {/* Description */}
+                  <p className="text-xs text-[#1E2A44]/65 leading-relaxed mt-6 pt-5 border-t border-[#1E2A44]/5">
+                    {item.description}
                   </p>
                 </div>
               );
             })}
           </div>
         </div>
-      </div>
 
-      {/* Light inline text link under the strip (Replaces the heavy CTA banner) */}
-      <div className="stats-footnote mt-8 text-center">
-        <a
-          href="#admissions"
-          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#1E2A44] hover:text-[#E8B923] transition-colors group focus:outline-none focus-visible:underline"
-        >
-          <span>Become Part of Our Story</span>
-          <ArrowRight
-            size={15}
-            className="group-hover:translate-x-1 transition-transform"
-          />
-        </a>
+        {/* Section Footnote / Narrative Link */}
+        <div className="stats-footer mt-10 sm:mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 px-2">
+          <p className="text-xs text-[#1E2A44]/55 font-medium text-center sm:text-left">
+            Founded in memory of John Martyn, former Headmaster of The Doon School.
+          </p>
+          <Link
+            to="/about/history"
+            className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold text-[#1E2A44] hover:text-[#E8B923] transition-colors group"
+          >
+            <span>Read our 40-year archive</span>
+            <ArrowRight
+              size={14}
+              className="group-hover:translate-x-1 transition-transform"
+            />
+          </Link>
+        </div>
       </div>
     </section>
   );

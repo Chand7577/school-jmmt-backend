@@ -1,4 +1,11 @@
-import { MapPin, Mail, Phone, Quote } from "../components/ui/Icons";
+import {
+  MapPin,
+  Mail,
+  Phone,
+  Quote,
+  Sparkles,
+  Heart,
+} from "../components/ui/Icons";
 import historyBanner from "../assets/history-banner.webp";
 import pic1 from "../assets/Picture1.png";
 import pic2 from "../assets/Picture2.jpg";
@@ -14,7 +21,7 @@ import photoSinghVirk from "../assets/mr-singh-virk.png";
 import photoVibha from "../assets/ms-vibha.png";
 import photoJagpreet from "../assets/mr-jagpreet.png";
 import photoSameer from "../assets/mr-sameer.jpeg";
-import principalPhoto from "../assets/jmmt-principal.JPG";
+import principalPhoto from "../assets/principal-portrait.jpg";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -255,73 +262,187 @@ const SchoolHistory = () => (
 // ─── Section 2: Principal's Message ──────────────────────────────────────────
 
 const PrincipalsMessage = () => (
-  <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-[#1E2A44]">
-    <div className="max-w-4xl mx-auto">
-      <SectionEyebrow label="Principal's message" />
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white mb-10 leading-tight">
-        A Word from Our Principal
-      </h2>
+  <section className="relative py-20 lg:py-28 px-4 sm:px-8 lg:px-12 xl:px-16 bg-[#141E30] text-white overflow-hidden">
+    {/* Atmospheric ambient lighting */}
+    <div className="absolute top-0 right-1/4 w-[750px] h-[500px] bg-[#E8B923]/10 rounded-full blur-[150px] pointer-events-none -translate-y-1/3" />
+    <div className="absolute bottom-0 left-10 w-[550px] h-[400px] bg-blue-500/5 rounded-full blur-[130px] pointer-events-none" />
 
-      {/* Editorial spotlight band */}
-      <div className="bg-white/5 border border-white/10 rounded-3xl px-5 sm:px-10 lg:px-12 py-8 sm:py-10">
-        {/* Decorative quote icon */}
-        <Quote
-          size={48}
-          strokeWidth={1.5}
-          className="text-[#E8B923] mb-6 opacity-80"
-        />
+    {/* Subtle hairline accents */}
+    <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#E8B923]/35 to-transparent" />
+    <div className="absolute bottom-0 left-0 right-0 h-px bg-white/5" />
 
-        {/* Avatar + name */}
-        <div className="flex items-center gap-5 mb-8">
-          {/* Principal photograph container */}
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-2xl border-2 border-[#E8B923]/40 shrink-0 overflow-hidden shadow-inner relative">
-            <img
-              src={principalPhoto}
-              alt="Ms. Anu Ahuja – Principal, JMMS"
-              className="w-full h-full object-cover object-top"
-            />
+    <div className="max-w-[1340px] mx-auto relative z-10">
+      {/* Editorial Chapter Header */}
+      <div className="max-w-3xl mb-14 lg:mb-18 space-y-3">
+        <div className="inline-flex items-center gap-2.5">
+          <span className="w-7 h-px bg-[#E8B923]" />
+          <span className="text-[11px] font-bold tracking-[0.25em] text-[#E8B923] uppercase">
+            Chapter 02 · Leadership Vision
+          </span>
+        </div>
+
+        <h2 className="text-3xl sm:text-5xl lg:text-6xl font-extralight tracking-tight text-white leading-[1.12]">
+          A Word from Our <br className="hidden sm:inline" />
+          <span className="font-black text-[#E8B923]">Principal</span>
+        </h2>
+        
+        <p className="text-sm sm:text-base text-white/70 font-light max-w-xl pt-1">
+          Guiding 160+ rural children in the Salangaon foothills through empathy, curiosity, and non-commercial values.
+        </p>
+      </div>
+
+      {/* Editorial Spread: 2-Column Balanced Layout */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 xl:gap-16 items-start">
+        
+        {/* Left Column (5 Cols): Stately Portrait Feature */}
+        <div className="lg:col-span-5 space-y-6">
+          <div className="relative rounded-3xl overflow-hidden border border-white/10 shadow-2xl bg-[#1E2A44] group">
+            {/* Portrait Image */}
+            <div className="relative h-[440px] sm:h-[500px] w-full overflow-hidden">
+              <img
+                src={principalPhoto}
+                alt="Ms. Anu Ahuja – Principal, John Martyn Memorial School"
+                className="w-full h-full object-cover object-[center_18%] group-hover:scale-105 transition-transform duration-700"
+              />
+              {/* Subtle bottom gradient only for the nameplate legibility, leaving face clear */}
+              <div className="absolute bottom-0 left-0 right-0 h-36 bg-gradient-to-t from-[#141E30] via-[#141E30]/60 to-transparent pointer-events-none" />
+            </div>
+
+            {/* Experience Pill on Photo */}
+            <div className="absolute top-5 left-5 bg-[#141E30]/90 backdrop-blur-md border border-[#E8B923]/40 text-[#E8B923] px-3.5 py-1.5 rounded-full text-xs font-black tracking-wide shadow-lg">
+              18+ Yrs Educational Leadership
+            </div>
+
+            {/* Nameplate & Credentials Overlay */}
+            <div className="absolute bottom-6 left-6 right-6">
+              <div className="space-y-1">
+                <span className="text-[10px] font-mono uppercase tracking-widest text-[#E8B923] font-bold block">
+                  Head of School
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-black text-white leading-tight">
+                  Ms. Anu Ahuja
+                </h3>
+                <p className="text-xs text-white/75 font-medium">
+                  Principal, John Martyn Memorial School · Salangaon
+                </p>
+              </div>
+            </div>
           </div>
-          <div>
-            <div className="flex items-center gap-3">
-              <p className="text-white font-black text-lg">Ms. Anu Ahuja</p>
-              <span className="text-[10px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-[#E8B923] text-[#1E2A44]">
-                18 Yrs Experience
+
+          {/* Institutional Metrics Pill Deck */}
+          <div className="grid grid-cols-3 gap-3 p-4 rounded-2xl bg-white/[0.04] border border-white/10 text-center">
+            <div className="space-y-0.5">
+              <span className="text-xl sm:text-2xl font-black text-[#E8B923] block leading-none">
+                160+
+              </span>
+              <span className="text-[10px] text-white/60 font-mono uppercase tracking-wider block">
+                Scholars
               </span>
             </div>
-            <p className="text-[#E8B923] text-sm font-semibold">
-              Principal, JMMS
+            <div className="space-y-0.5 border-x border-white/10">
+              <span className="text-xl sm:text-2xl font-black text-white block leading-none">
+                14:1
+              </span>
+              <span className="text-[10px] text-white/60 font-mono uppercase tracking-wider block">
+                Ratio
+              </span>
+            </div>
+            <div className="space-y-0.5">
+              <span className="text-xl sm:text-2xl font-black text-[#E8B923] block leading-none">
+                40 Yrs
+              </span>
+              <span className="text-[10px] text-white/60 font-mono uppercase tracking-wider block">
+                Heritage
+              </span>
+            </div>
+          </div>
+
+          {/* Ethos Quote Pill */}
+          <div className="p-5 rounded-2xl bg-amber-500/5 border border-amber-400/15 flex items-start gap-3 text-xs text-white/80 leading-relaxed font-light">
+            <Sparkles size={16} className="text-[#E8B923] shrink-0 mt-0.5" />
+            <p>
+              <strong className="text-white font-semibold">Core Philosophy:</strong>{" "}
+              “Childhood should be a journey of wonder and joy, not an anxious race for marks.”
             </p>
           </div>
         </div>
 
-        {/* Principal's Message */}
-        <div className="space-y-6 text-white/90 text-base leading-relaxed">
-          <p>
-            My vision for John Martyn Memorial School is simple — to build a school where every child feels seen, valued, 
-            and empowered to <strong className="text-[#E8B923]">Learn, Lead, and Serve</strong>.
-          </p>
-          
-          <p>
-            I believe education must go beyond marks. It must nurture curiosity, build character, and instill 
-            responsibility. At JMMS, we strive to create classrooms where children ask questions freely, 
-            playgrounds where they learn teamwork, and a community where they understand the joy of giving back.
-          </p>
-          
-          <p>
-            The last few years have taught us that resilience and compassion matter as much as academics. 
-            That is why, along with strong learning, we focus on values, discipline, and service to others.
-          </p>
-          
-          <div className="border-t border-white/10 pt-6 space-y-3">
-            <p className="font-semibold text-[#E8B923]">
-              To our students: <span className="text-white font-normal">Dream big, work hard, and lead with integrity.</span>
-            </p>
-            
-            <p className="font-semibold text-[#E8B923]">
-              To our parents and teachers: <span className="text-white font-normal">Thank you for being partners in this journey. Together, let us raise young people who are confident, kind, and ready to make a difference.</span>
+        {/* Right Column (7 Cols): Magazine-Grade Dispatch */}
+        <div className="lg:col-span-7 bg-white/[0.035] border border-white/10 rounded-3xl p-7 sm:p-12 shadow-2xl relative backdrop-blur-sm space-y-8">
+          {/* Decorative Quote Icon Watermark */}
+          <Quote
+            size={48}
+            strokeWidth={1.5}
+            className="text-[#E8B923] opacity-75 shrink-0"
+          />
+
+          {/* Pull Quote Highlight */}
+          <div className="border-l-2 border-[#E8B923] pl-6 py-1">
+            <p className="text-lg sm:text-2xl text-white font-extralight leading-relaxed tracking-tight">
+              “My vision for John Martyn Memorial School is simple — to build a sanctuary where every child feels seen, valued, and empowered to{" "}
+              <strong className="font-black text-[#E8B923]">Learn, Lead, and Serve</strong>.”
             </p>
           </div>
+
+          {/* The Narrative Body */}
+          <div className="space-y-5 text-white/85 text-sm sm:text-base leading-relaxed font-light">
+            <p>
+              I believe education must go far beyond marks and report cards. It must nurture innate curiosity, build enduring character, and instill mutual responsibility. At JMMS, we strive to create classrooms where children ask questions freely without fear of being judged, playgrounds where they discover teamwork, and a community where they understand the profound joy of giving back.
+            </p>
+            <p>
+              The journey of learning in the Doon foothills has shown us that resilience, empathy, and ethical grounding matter every bit as much as textbook grades. We guide our students to grow into confident, thoughtful young citizens who take immense pride in their rural roots while reaching for the stars.
+            </p>
+          </div>
+
+          {/* Dedicated Dual Message Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+            <div className="p-5 rounded-2xl bg-white/[0.04] border border-white/10 space-y-2">
+              <div className="flex items-center gap-2 text-[#E8B923]">
+                <Sparkles size={15} />
+                <span className="text-[11px] font-bold uppercase tracking-wider">
+                  To Our Students
+                </span>
+              </div>
+              <p className="text-xs text-white/75 leading-relaxed font-light">
+                Dream big, work hard, and lead with quiet integrity. Never lose your appetite for wonder and questions.
+              </p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-white/[0.04] border border-white/10 space-y-2">
+              <div className="flex items-center gap-2 text-[#E8B923]">
+                <Heart size={15} />
+                <span className="text-[11px] font-bold uppercase tracking-wider">
+                  To Parents &amp; Teachers
+                </span>
+              </div>
+              <p className="text-xs text-white/75 leading-relaxed font-light">
+                Thank you for being dedicated partners in this mission. Together, let us raise young people who are confident and kind.
+              </p>
+            </div>
+          </div>
+
+          {/* Formal Editorial Sign-off */}
+          <div className="pt-6 border-t border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <span className="text-xs font-mono text-white/50 block mb-1">
+                With dedication &amp; warmest regards,
+              </span>
+              <span className="text-xl sm:text-2xl font-black text-white tracking-wide block">
+                Ms. Anu Ahuja
+              </span>
+              <span className="text-xs text-[#E8B923] font-semibold tracking-wider uppercase">
+                Principal, John Martyn Memorial School
+              </span>
+            </div>
+
+            <div className="flex items-center gap-2 text-xs font-mono text-white/50 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <span>Salangaon Campus · Dehradun</span>
+            </div>
+          </div>
+
         </div>
+
       </div>
     </div>
   </section>
