@@ -76,13 +76,20 @@ function authenticateAdmin($email, $password) {
     try {
         $pdo = getDbConnection();
         
-        // Match by exact email or admin alias
-        $sql = "SELECT id, email, password_hash, full_name, is_active 
-                FROM admin_users 
-                WHERE (email = ? OR email = ? OR email = 'admin@gmail.com') AND is_active = TRUE";
-        
-        $alias = (strpos($email, '@') === false) ? $email . '@gmail.com' : $email;
-        $stmt = executeQuery($pdo, $sql, [$email, $alias]);
+        // Match by exact email or username alias (username@gmail.com convention)
+        $alias = (strpos($email, '@') === false) ? $email . '@gmail.com' : null;
+
+        if ($alias !== null) {
+            $sql = "SELECT id, email, password_hash, full_name, is_active
+                    FROM admin_users
+                    WHERE (email = ? OR email = ?) AND is_active = TRUE";
+            $stmt = executeQuery($pdo, $sql, [$email, $alias]);
+        } else {
+            $sql = "SELECT id, email, password_hash, full_name, is_active
+                    FROM admin_users
+                    WHERE email = ? AND is_active = TRUE";
+            $stmt = executeQuery($pdo, $sql, [$email]);
+        }
         $user = $stmt->fetch();
         
         $isPasswordValid = false;

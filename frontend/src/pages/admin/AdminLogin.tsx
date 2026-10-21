@@ -67,10 +67,32 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
   const handleForgotSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (!forgotEmail.trim()) {
+
+    const val = forgotEmail.trim();
+
+    if (!val) {
       setError("Please enter your registered email or username.");
       return;
     }
+
+    // If it looks like an email, validate the format
+    if (val.includes("@")) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(val)) {
+        setError("Please enter a valid email address (e.g. admin@school.com).");
+        return;
+      }
+    } else {
+      // Username: only alphanumeric, dots, underscores, hyphens; 3–50 chars
+      const usernameRegex = /^[a-zA-Z0-9._-]{3,50}$/;
+      if (!usernameRegex.test(val)) {
+        setError(
+          "Username must be 3–50 characters and contain only letters, numbers, dots, underscores, or hyphens."
+        );
+        return;
+      }
+    }
+
     setLoading(true);
     try {
       await adminApi.forgotPassword(forgotEmail.trim());
@@ -286,7 +308,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                 ) : (
                   <form onSubmit={handleForgotSubmit} className="space-y-4">
                     <p className="text-xs text-gray-600 leading-relaxed mb-2">
-                      Enter your registered administrator email or username. We will send a secure password reset link directly to your inbox.
+                      Enter your registered administrator email or username to receive a password reset link.
                     </p>
 
                     <div>
@@ -297,11 +319,16 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
                         type="text"
                         value={forgotEmail}
                         onChange={(e) => setForgotEmail(e.target.value)}
-                        placeholder="admin@gmail.com"
+                        placeholder="admin or admin@school.com"
+                        autoComplete="username"
+                        spellCheck={false}
                         className="w-full px-3.5 py-2.5 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#E8B923] focus:border-transparent transition"
                         disabled={loading}
                         autoFocus
                       />
+                      <p className="mt-1.5 text-[11px] text-gray-400">
+                        Must be an exact match to your registered account.
+                      </p>
                     </div>
 
                     <button

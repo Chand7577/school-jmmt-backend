@@ -45,13 +45,25 @@ try {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
     $pdo->exec($createTableSql);
 
-    // 2. Resolve admin user
-    $alias = (strpos($rawInput, '@') === false) ? $rawInput . '@gmail.com' : $rawInput;
-    $stmt = executeQuery(
-        $pdo, 
-        "SELECT id, email, full_name, is_active FROM admin_users WHERE (email = ? OR email = ? OR email = 'admin@gmail.com') AND is_active = 1 LIMIT 1", 
-        [$rawInput, $alias]
-    );
+    // 2. Resolve admin user by exact email OR username alias (username@gmail.com convention)
+    //    Do NOT fall back to a hardcoded email — that would send a reset link for any input.
+    $alias = (strpos($rawInput, '@') === false) ? $rawInput . '@gmail.com' : null;
+
+    if ($alias !== null) {
+        // Input looks like a plain username — try both the raw value and the alias
+        $stmt = executeQuery(
+            $pdo,
+            "SELECT id, email, full_name, is_active FROM admin_users WHERE (email = ? OR email = ?) AND is_active = 1 LIMIT 1",
+            [$rawInput, $alias]
+        );
+    } else {
+        // Input is an email — match exactly
+        $stmt = executeQuery(
+            $pdo,
+            "SELECT id, email, full_name, is_active FROM admin_users WHERE email = ? AND is_active = 1 LIMIT 1",
+            [$rawInput]
+        );
+    }
     $admin = $stmt->fetch();
 
     if ($admin) {
