@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { schoolEventsData, SchoolEvent } from "../data/eventsData";
 import { API_BASE_URL } from "../config/api";
+import eventsHeroBg from "../assets/events-hero-bg.jpg";
 import {
   Clock,
   MapPin,
@@ -98,11 +99,23 @@ const SchoolEventsPage: React.FC = () => {
 
   return (
     <div className="bg-[#FDFBF7] min-h-screen text-[#1E2A44]">
-      {/* ── 1. CINEMATIC EDITORIAL MASTHEAD ── */}
-      <header className="relative bg-[#1E2A44] text-white pt-28 pb-16 lg:pt-36 lg:pb-20 overflow-hidden">
+      {/* ── 1. CINEMATIC EDITORIAL MASTHEAD WITH SCHOOL GALLERY BACKGROUND ── */}
+      <header className="relative bg-[#1E2A44] text-white pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden">
+        {/* Background photo from school gallery */}
+        <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+          <img
+            src={eventsHeroBg}
+            alt="Students gathered at JMMS outdoor amphitheatre"
+            className="w-full h-full object-cover object-[center_35%] filter brightness-[0.45] saturate-[1.15]"
+          />
+          {/* Atmospheric cinematic overlays ensuring ultra-sharp text readability */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1E2A44] via-[#1E2A44]/80 to-[#1E2A44]/75" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1E2A44] via-transparent to-[#1E2A44]/60" />
+        </div>
+
         {/* Ambient atmospheric glows */}
-        <div className="absolute top-0 right-1/4 w-[750px] h-[500px] bg-[#E8B923]/8 rounded-full blur-[140px] pointer-events-none -translate-y-1/2" />
-        <div className="absolute bottom-0 left-10 w-[600px] h-[350px] bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-[750px] h-[500px] bg-[#E8B923]/10 rounded-full blur-[140px] pointer-events-none -translate-y-1/2" />
+        <div className="absolute bottom-0 left-10 w-[600px] h-[350px] bg-blue-500/10 rounded-full blur-[120px] pointer-events-none" />
 
         {/* Gold hairline rule */}
         <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#E8B923]/40 to-transparent" />
