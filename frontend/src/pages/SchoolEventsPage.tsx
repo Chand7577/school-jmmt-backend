@@ -106,11 +106,11 @@ const SchoolEventsPage: React.FC = () => {
           <img
             src={eventsHeroBg}
             alt="Students gathered at JMMS outdoor amphitheatre"
-            className="w-full h-full object-cover object-[center_35%] filter brightness-[0.45] saturate-[1.15]"
+            className="w-full h-full object-cover object-[center_35%] filter brightness-[0.7] saturate-[1.1] opacity-95"
           />
-          {/* Atmospheric cinematic overlays ensuring ultra-sharp text readability */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1E2A44] via-[#1E2A44]/80 to-[#1E2A44]/75" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1E2A44] via-transparent to-[#1E2A44]/60" />
+          {/* Subtle semi-transparent overlays so the photo remains clearly visible while text stays legible */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1E2A44]/80 via-[#1E2A44]/50 to-[#1E2A44]/35" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1E2A44] via-transparent to-[#1E2A44]/30" />
         </div>
 
         {/* Ambient atmospheric glows */}
@@ -145,16 +145,16 @@ const SchoolEventsPage: React.FC = () => {
                   Campus Life &amp; Celebrations Archive
                 </span>
               </div>
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extralight tracking-tight text-white/90 leading-[1.08]">
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extralight tracking-tight text-white leading-[1.08] drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]">
                 Where curiosity finds <br />
-                <span className="font-black text-[#E8B923]">
+                <span className="font-black text-[#E8B923] drop-shadow-[0_2px_12px_rgba(0,0,0,0.7)]">
                   its joyful voice.
                 </span>
               </h1>
             </div>
 
             <div className="lg:col-span-4 lg:pb-2">
-              <p className="text-sm sm:text-[15px] text-white/60 leading-relaxed font-light">
+              <p className="text-sm sm:text-[15px] text-white/90 leading-relaxed font-normal drop-shadow-[0_1px_8px_rgba(0,0,0,0.8)]">
                 Explore our annual sports tournaments, traditional loom expos, classical Himalayan recitals, and village community drives in Salangaon.
               </p>
             </div>
