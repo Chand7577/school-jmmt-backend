@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect, useCallback } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Heart } from "lucide-react";
 import StaggeredMenu from "./StaggeredMenu";
 import NewsletterDropdown from "./NewsletterDropdown";
@@ -21,6 +21,22 @@ const staggeredMenuItems = [
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const navigate = useNavigate();
+
+  const scrollToSection = useCallback((sectionId: string) => {
+    if (window.location.pathname === "/" || window.location.pathname === "") {
+      // Already on home — just smooth scroll
+      const el = document.getElementById(sectionId);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+    } else {
+      // Navigate to home first, then scroll after page loads
+      navigate("/");
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
+      }, 500);
+    }
+  }, [navigate]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -106,18 +122,18 @@ const Header = () => {
               </div>
 
               <div className="hidden lg:flex items-center gap-2.5">
-                <a
-                  href="/#admissions"
-                  className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all"
+                <button
+                  onClick={() => scrollToSection("admissions")}
+                  className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all cursor-pointer"
                 >
                   Admissions
-                </a>
-                <a
-                  href="/#contact"
-                  className="px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all"
+                </button>
+                <button
+                  onClick={() => scrollToSection("contact")}
+                  className="px-5 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold border border-white/20 transition-all cursor-pointer"
                 >
                   Contact
-                </a>
+                </button>
               </div>
 
               {/* Donate Button - Takes user directly to /donate page */}
