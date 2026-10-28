@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { Heart } from "lucide-react";
 import StaggeredMenu from "./StaggeredMenu";
-import DonateButton from "./DonateButtonOld";
 import NewsletterDropdown from "./NewsletterDropdown";
 import { JMMSLogoBadge } from "./ui/JMMSLogo";
 
 // Items shown in the StaggeredMenu side-panel (all screens)
 const staggeredMenuItems = [
   { label: "Home", link: "/", isAnchor: false },
+  { label: "Sponsor & Donate", link: "/donate", isAnchor: false },
   { label: "About", link: "/about", isAnchor: false },
   { label: "What We Offer", link: "/#offers", isAnchor: true },
   { label: "Academic Leadership & Faculty", link: "/#teachers", isAnchor: true },
@@ -58,12 +59,12 @@ const Header = () => {
             >
               <span>✉️</span> jmms.dehradun@gmail.com
             </a>
-            <a
-              href="/#admissions"
-              className="ml-2 bg-[#E8B923] text-[#1E2A44] font-extrabold px-3 py-1 rounded-full hover:bg-amber-400 transition-all text-[11px] shadow-sm"
+            <Link
+              to="/donate"
+              className="ml-2 bg-[#E8B923] text-[#1E2A44] font-extrabold px-3.5 py-1 rounded-full hover:bg-amber-400 transition-all text-[11px] shadow-sm"
             >
               Support JMMS
-            </a>
+            </Link>
           </div>
         </div>
       </div>
@@ -118,8 +119,18 @@ const Header = () => {
                 </a>
               </div>
 
-              {/* Donate Button - Visible on both Mobile & Desktop */}
-              <DonateButton />
+              {/* Donate Button - Takes user directly to /donate page */}
+              <Link
+                to="/donate"
+                className="relative group overflow-hidden rounded-full p-[2px] transition-all duration-300 hover:scale-105 active:scale-95 shadow-md shadow-[#E8B923]/20 shrink-0"
+                aria-label="Go to Donate Page"
+              >
+                <span className="absolute inset-0 bg-gradient-to-r from-[#E8B923] via-amber-300 to-[#E8B923] rounded-full animate-pulse opacity-75 group-hover:opacity-100 transition-opacity" />
+                <span className="relative flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1E2A44] transition-colors duration-300 group-hover:bg-[#1E2A44]/90">
+                  <Heart className="w-3.5 h-3.5 text-[#E8B923] fill-[#E8B923] animate-bounce" />
+                  <span className="text-white font-extrabold text-xs tracking-wider">DONATE</span>
+                </span>
+              </Link>
 
               {/* Animated Staggered Menu for all screens */}
               <StaggeredMenu

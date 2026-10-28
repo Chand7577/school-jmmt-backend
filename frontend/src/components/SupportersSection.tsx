@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 import { useGsapReveal } from "../hooks/useGsapReveal";
 import {
   Landmark,
@@ -137,8 +138,8 @@ const SupportersSection: React.FC = () => {
               </p>
 
               <div className="pt-2">
-                <a
-                  href="#contact"
+                <Link
+                  to="/donate"
                   className="w-full inline-flex items-center justify-center gap-2.5 px-6 py-3 rounded-full bg-[#E8B923] text-[#1E2A44] font-bold text-xs hover:bg-amber-400 transition-all shadow-lg shadow-[#E8B923]/20 group"
                 >
                   <span>Sponsor a Student</span>
@@ -146,7 +147,7 @@ const SupportersSection: React.FC = () => {
                     size={13}
                     className="group-hover:translate-x-1 transition-transform"
                   />
-                </a>
+                </Link>
               </div>
             </div>
           </div>

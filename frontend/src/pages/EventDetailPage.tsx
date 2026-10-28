@@ -525,7 +525,7 @@ const EventDetailPage: React.FC = () => {
                 John Martyn Memorial School is a charitable institution providing high-quality free education and hot midday meals to 160+ rural children.
               </p>
               <Link
-                to="/#support"
+                to="/donate"
                 className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-full bg-[#E8B923] hover:bg-[#d4a81f] text-[#1E2A44] text-xs font-bold transition-all shadow-sm group"
               >
                 <span>Support Student Activities</span>
