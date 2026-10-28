@@ -20,7 +20,6 @@ import photoChandani from "../assets/ms-chandani.png";
 import photoSinghVirk from "../assets/mr-singh-virk.png";
 import photoVibha from "../assets/ms-vibha.png";
 import photoJagpreet from "../assets/mr-jagpreet.png";
-import photoSameer from "../assets/mr-sameer.jpeg";
 import principalPhoto from "../assets/principal-portrait.jpg";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -169,15 +168,8 @@ const exOfficioTrustees: Trustee[] = [
     phone: "01352526400, 7088992223",
   },
   {
-    name: "Mr. Sameer Dhingra",
-    role: "President, The Doon School Old Boys Society",
-    badge: "Ex-Officio Trustee",
-    photoUrl: photoSameer,
-    address:
-      "1007 10th floor, Bhikaji Cama Bhawan, Bhikaji Cama Place, New Delhi 110066",
-  },
-  {
     name: "Mr. Rahul Narain Bhagat",
+    role: "President, The Doon School Old Boys Society",
     badge: "Ex-Officio Trustee",
     photoUrl: photoNarain,
     address:

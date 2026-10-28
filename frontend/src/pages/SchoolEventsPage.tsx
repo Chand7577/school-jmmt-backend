@@ -100,17 +100,18 @@ const SchoolEventsPage: React.FC = () => {
   return (
     <div className="bg-[#FDFBF7] min-h-screen text-[#1E2A44]">
       {/* ── 1. CINEMATIC EDITORIAL MASTHEAD WITH SCHOOL GALLERY BACKGROUND ── */}
-      <header className="relative bg-[#1E2A44] text-white pt-28 pb-16 lg:pt-36 lg:pb-24 overflow-hidden">
+      <header className="relative bg-[#1E2A44] text-white pt-28 pb-20 lg:pt-36 lg:pb-28 min-h-[580px] lg:min-h-[660px] flex flex-col justify-center overflow-hidden">
         {/* Background photo from school gallery */}
         <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
           <img
             src={eventsHeroBg}
             alt="Students gathered at JMMS outdoor amphitheatre"
-            className="w-full h-full object-cover object-[center_35%] filter brightness-[0.7] saturate-[1.1] opacity-95"
+            className="w-full h-full object-cover object-[center_45%] filter brightness-[0.88] contrast-[1.05] saturate-[1.15]"
           />
-          {/* Subtle semi-transparent overlays so the photo remains clearly visible while text stays legible */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#1E2A44]/80 via-[#1E2A44]/50 to-[#1E2A44]/35" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#1E2A44] via-transparent to-[#1E2A44]/30" />
+          {/* Soft directional gradient: dark on the left for text contrast, open & clear on the right so children are fully visible */}
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1E2A44]/85 via-[#1E2A44]/45 to-[#1E2A44]/20" />
+          {/* Very slim bottom feathering to preserve all rows of children */}
+          <div className="absolute bottom-0 inset-x-0 h-10 bg-gradient-to-t from-[#1E2A44]/60 to-transparent" />
         </div>
 
         {/* Ambient atmospheric glows */}
