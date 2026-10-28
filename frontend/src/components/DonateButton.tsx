@@ -4,15 +4,10 @@ import {
   X,
   Heart,
   IndianRupee,
-  Mail,
-  Phone,
-  User,
-  MessageSquare,
   GraduationCap,
   Utensils,
   Coffee,
   Check,
-  ShieldCheck,
   ArrowRight,
 } from "lucide-react";
 import { API_BASE_URL } from "../config/api";
@@ -393,150 +388,91 @@ const DonateButton: React.FC<DonateButtonProps> = ({
       {/* Main Donation Modal */}
       {isModalOpen &&
         createPortal(
-          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fadeIn overflow-y-auto">
-            <div className="relative w-full max-w-4xl max-h-[92vh] bg-[#FDFBF7] rounded-3xl shadow-2xl overflow-hidden animate-slideUp my-auto border border-[#1E2A44]/15 flex flex-col">
+          <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn overflow-y-auto">
+            <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl animate-slideUp my-auto flex flex-col">
+
               {/* Header */}
-              <div className="bg-[#1E2A44] text-white p-6 sm:p-7 flex items-center justify-between shrink-0 relative overflow-hidden border-b border-white/10">
-                <div className="absolute top-0 right-0 w-80 h-80 bg-[#E8B923]/10 rounded-full blur-3xl pointer-events-none" />
-
-                <div className="flex items-center gap-3.5 relative z-10">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-400/20 border border-amber-300/30 flex items-center justify-center text-[#E8B923]">
-                    <Heart className="w-5 h-5 fill-current" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
-                      {step === "packages" ? "Sponsor a Rural Child · JMMS" : selectedTier?.title || "Complete Donation"}
-                    </h2>
-                    <p className="text-xs text-white/70 font-light">
-                      {step === "packages"
-                        ? "Choose a specific student sponsorship tier or enter custom amount"
-                        : "Secure online contribution powered by Razorpay · 80G Tax Exempt"}
-                    </p>
-                  </div>
+              <div className="flex items-start justify-between p-6 pb-4">
+                <div>
+                  <p className="text-[11px] font-semibold uppercase tracking-widest text-[#E8B923] mb-1">
+                    {step === "packages" ? "Child Sponsorship" : "Complete your donation"}
+                  </p>
+                  <h2 className="text-lg font-bold text-[#1E2A44] leading-snug">
+                    {step === "packages" ? "Choose a sponsorship" : selectedTier?.title || "Donation"}
+                  </h2>
                 </div>
-
                 <button
                   onClick={() => {
                     setIsModalOpen(false);
                     setStep("packages");
                     setSelectedTier(null);
                   }}
-                  className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer relative z-10"
-                  aria-label="Close donation modal"
+                  className="w-8 h-8 rounded-full bg-stone-100 hover:bg-stone-200 text-stone-500 flex items-center justify-center transition-all cursor-pointer ml-4 shrink-0 mt-0.5"
+                  aria-label="Close"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Scrollable Content Body */}
-              <div className="overflow-y-auto flex-1 p-6 sm:p-8">
+              {/* Divider */}
+              <div className="h-px bg-stone-100 mx-6" />
+
+              {/* Scrollable Content */}
+              <div className="overflow-y-auto max-h-[75vh] p-6">
                 {step === "packages" ? (
-                  // Step 1: Specific Sponsorship Tiers
-                  <div className="space-y-6">
-                    <div className="text-center max-w-xl mx-auto space-y-1 mb-6">
-                      <span className="text-[10px] font-mono uppercase tracking-widest text-[#E8B923] font-bold">
-                        Direct Child Sponsorship
-                      </span>
-                      <h3 className="text-xl sm:text-2xl font-black text-[#1E2A44]">
-                        Select Your Sponsorship Impact
-                      </h3>
-                      <p className="text-xs text-[#1E2A44]/70 font-light">
-                        100% of your gift reaches rural children at John Martyn Memorial School in Salangaon.
-                      </p>
-                    </div>
-
-                    {/* 3 Specific Donation Tiers */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                      {donationTiers.map((tier) => (
-                        <div
-                          key={tier.id}
-                          className={`relative rounded-3xl bg-white border-2 p-6 flex flex-col justify-between transition-all duration-300 hover:shadow-xl ${
-                            tier.popular
-                              ? "border-[#E8B923] shadow-md ring-2 ring-[#E8B923]/20"
-                              : "border-[#1E2A44]/10 hover:border-[#1E2A44]/30"
-                          }`}
-                        >
-                          {tier.badge && (
-                            <span
-                              className={`absolute -top-3 left-6 text-[10px] font-bold uppercase tracking-wider px-3 py-0.5 rounded-full border shadow-sm ${
-                                tier.badgeColor || "bg-amber-100 text-amber-900 border-amber-300"
-                              }`}
-                            >
-                              {tier.badge}
-                            </span>
-                          )}
-
+                  <div className="space-y-3">
+                    {donationTiers.map((tier) => (
+                      <button
+                        key={tier.id}
+                        onClick={() => handleSelectTier(tier)}
+                        className={`w-full text-left rounded-xl p-4 flex items-center justify-between gap-4 transition-all cursor-pointer group ${
+                          tier.popular
+                            ? "bg-[#1E2A44] text-white"
+                            : "bg-stone-50 hover:bg-stone-100 text-[#1E2A44]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${tier.colorGradient} flex items-center justify-center text-white shrink-0`}>
+                            {getTierIcon(tier.iconName)}
+                          </div>
                           <div>
-                            <div className="flex items-center justify-between mb-4">
-                              <div
-                                className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${tier.colorGradient} flex items-center justify-center text-white shadow-md`}
-                              >
-                                {getTierIcon(tier.iconName)}
-                              </div>
-                              <span className="text-[10px] font-mono uppercase text-stone-400 font-bold tracking-widest">
-                                Annual
-                              </span>
-                            </div>
-
-                            <h4 className="text-base font-black text-[#1E2A44] leading-snug">{tier.title}</h4>
-                              <p className="text-xs text-[#1E2A44]/65 font-light leading-relaxed mt-2">
-                                {tier.description}
-                              </p>
-
-                            <div className="my-5 py-3 border-y border-[#1E2A44]/10">
-                              <div className="flex items-baseline gap-1.5">
-                                <span className="text-3xl font-black text-[#1E2A44]">
-                                  ₹{tier.amount.toLocaleString("en-IN")}
-                                </span>
-                                <span className="text-[11px] font-mono text-stone-500">/ yr</span>
-                              </div>
-                            </div>
-
-                            <p className="text-xs text-[#1E2A44]/65 font-light leading-relaxed mt-2 mb-6">
+                            <p className={`text-sm font-semibold leading-snug ${tier.popular ? "text-white" : "text-[#1E2A44]"}`}>
+                              {tier.title}
+                            </p>
+                            <p className={`text-xs mt-0.5 ${tier.popular ? "text-white/70" : "text-stone-500"}`}>
                               {tier.description}
                             </p>
                           </div>
-
-                          <button
-                            onClick={() => handleSelectTier(tier)}
-                            className={`w-full py-3 rounded-full font-bold text-xs uppercase tracking-wider transition-all cursor-pointer flex items-center justify-center gap-2 ${
-                              tier.popular
-                                ? "bg-[#E8B923] hover:bg-[#d4a61f] text-[#1E2A44] shadow-md"
-                                : "bg-[#1E2A44] hover:bg-[#28385a] text-white"
-                            }`}
-                          >
-                            <span>Sponsor This</span>
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
                         </div>
-                      ))}
-                    </div>
+                        <div className="text-right shrink-0">
+                          <p className={`text-base font-bold ${tier.popular ? "text-[#E8B923]" : "text-[#1E2A44]"}`}>
+                            ₹{tier.amount.toLocaleString("en-IN")}
+                          </p>
+                          <p className={`text-[10px] ${tier.popular ? "text-white/60" : "text-stone-400"}`}>/year</p>
+                        </div>
+                      </button>
+                    ))}
 
-                    {/* Custom Amount Option */}
-                    <div className="mt-6 p-6 rounded-3xl bg-white border border-[#1E2A44]/10 flex flex-col sm:flex-row items-center justify-between gap-4">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-50 border border-amber-200/60 flex items-center justify-center text-[#E8B923] shrink-0">
-                          <Heart className="w-6 h-6" />
+                    {/* Custom Amount */}
+                    <button
+                      onClick={() => handleSelectTier(customDonationTier)}
+                      className="w-full text-left rounded-xl p-4 flex items-center justify-between gap-4 bg-stone-50 hover:bg-stone-100 transition-all cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-stone-200 flex items-center justify-center text-stone-600 shrink-0">
+                          <Heart className="w-5 h-5" />
                         </div>
                         <div>
-                          <h4 className="text-sm font-black text-[#1E2A44]">Want to contribute a custom amount?</h4>
-                          <p className="text-xs text-[#1E2A44]/65 font-light">
-                            Every rupee supports classroom supplies, library books, and sports equipment.
-                          </p>
+                          <p className="text-sm font-semibold text-[#1E2A44]">Custom amount</p>
+                          <p className="text-xs text-stone-500 mt-0.5">Donate any amount you'd like</p>
                         </div>
                       </div>
-
-                      <button
-                        onClick={() => handleSelectTier(customDonationTier)}
-                        className="px-6 py-2.5 rounded-full bg-[#FDFBF7] hover:bg-stone-100 text-[#1E2A44] border border-[#1E2A44]/20 text-xs font-bold transition-all shrink-0 cursor-pointer"
-                      >
-                        Enter Custom Amount →
-                      </button>
-                    </div>
+                      <ArrowRight className="w-4 h-4 text-stone-400" />
+                    </button>
                   </div>
                 ) : (
-                  // Step 2: Donor Details Form
-                  <form onSubmit={handleSubmit} className="space-y-6 max-w-2xl mx-auto">
+                  // Step 2: Form
+                  <form onSubmit={handleSubmit} className="space-y-4">
                     <button
                       type="button"
                       onClick={() => {
@@ -544,165 +480,116 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                         setSelectedTier(null);
                         setErrors({});
                       }}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E2A44] hover:text-[#E8B923] transition-colors cursor-pointer"
+                      className="inline-flex items-center gap-1 text-xs text-stone-500 hover:text-[#1E2A44] transition-colors cursor-pointer mb-1"
                     >
-                      ← Back to sponsorship packages
+                      ← Back
                     </button>
 
-                    {/* Selected Tier Banner */}
-                    <div className="p-5 rounded-2xl bg-amber-500/10 border border-[#E8B923]/30 flex items-center justify-between gap-4">
-                      <div className="space-y-1">
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-[#E8B923] font-bold block">
-                          Selected Sponsorship
-                        </span>
-                        <h4 className="text-base font-black text-[#1E2A44]">{selectedTier?.title}</h4>
-                        <p className="text-xs text-[#1E2A44]/75 font-light">{selectedTier?.description}</p>
+                    {/* Amount pill */}
+                    {selectedTier && selectedTier.amount > 0 && (
+                      <div className="flex items-center justify-between bg-stone-50 rounded-xl px-4 py-3">
+                        <span className="text-sm text-stone-500">Amount</span>
+                        <span className="text-lg font-bold text-[#1E2A44]">₹{selectedTier.amount.toLocaleString("en-IN")}</span>
                       </div>
+                    )}
 
-                      <div className="text-right shrink-0">
-                        {selectedTier && selectedTier.amount > 0 ? (
-                          <span className="text-2xl font-black text-[#1E2A44]">
-                            ₹{selectedTier.amount.toLocaleString("en-IN")}
-                          </span>
-                        ) : (
-                          <span className="text-xs font-mono font-bold text-amber-800 uppercase">Custom Amount</span>
-                        )}
+                    {/* Custom amount input */}
+                    {selectedTier && selectedTier.amount === 0 && (
+                      <div>
+                        <label className="block text-xs font-medium text-stone-500 mb-1.5">Amount (₹)</label>
+                        <div className="relative">
+                          <IndianRupee className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
+                          <input
+                            type="number"
+                            value={formData.amount}
+                            onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                            placeholder="e.g. 5000"
+                            min="10"
+                            className="w-full pl-10 pr-4 py-3 rounded-xl bg-stone-50 border border-stone-200 font-semibold text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] focus:border-transparent transition-all"
+                          />
+                        </div>
+                        {errors.amount && <p className="text-xs text-red-500 mt-1">{errors.amount}</p>}
                       </div>
-                    </div>
+                    )}
 
-                    {/* Amount Input (editable only if custom) */}
+                    {/* Name */}
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#1E2A44] mb-1.5">
-                        Donation Amount (INR) *
-                      </label>
-                      <div className="relative">
-                        <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-stone-400" />
-                        <input
-                          type="number"
-                          value={formData.amount}
-                          onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                          readOnly={selectedTier ? selectedTier.amount > 0 : false}
-                          placeholder="e.g. 5000"
-                          min="10"
-                          className={`w-full pl-11 pr-4 py-3 rounded-2xl border bg-white font-bold text-base text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] transition-all ${
-                            selectedTier && selectedTier.amount > 0
-                              ? "bg-stone-50 border-stone-200 text-stone-700 cursor-not-allowed"
-                              : "border-[#1E2A44]/20"
-                          }`}
-                        />
-                      </div>
-                      {errors.amount && <p className="text-xs text-red-500 mt-1">{errors.amount}</p>}
+                      <label className="block text-xs font-medium text-stone-500 mb-1.5">Full name *</label>
+                      <input
+                        type="text"
+                        value={formData.donor_name}
+                        onChange={(e) => setFormData({ ...formData, donor_name: e.target.value })}
+                        placeholder="Rahul Sharma"
+                        className={`w-full px-4 py-3 rounded-xl bg-stone-50 border text-sm text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] focus:border-transparent transition-all ${
+                          errors.donor_name ? "border-red-400 bg-red-50" : "border-stone-200"
+                        }`}
+                      />
+                      {errors.donor_name && <p className="text-xs text-red-500 mt-1">{errors.donor_name}</p>}
                     </div>
 
-                    {/* Donor Details Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-[#1E2A44] mb-1.5">
-                          <User className="w-3.5 h-3.5 inline mr-1 text-stone-400" />
-                          Full Name *
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.donor_name}
-                          onChange={(e) => setFormData({ ...formData, donor_name: e.target.value })}
-                          placeholder="e.g. Rahul Sharma"
-                          className={`w-full px-4 py-3 rounded-2xl border bg-white text-sm text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] ${
-                            errors.donor_name ? "border-red-400" : "border-[#1E2A44]/20"
-                          }`}
-                        />
-                        {errors.donor_name && <p className="text-xs text-red-500 mt-1">{errors.donor_name}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-[#1E2A44] mb-1.5">
-                          <Mail className="w-3.5 h-3.5 inline mr-1 text-stone-400" />
-                          Email Address *
-                        </label>
-                        <input
-                          type="email"
-                          value={formData.donor_email}
-                          onChange={(e) => setFormData({ ...formData, donor_email: e.target.value })}
-                          placeholder="for 80G tax receipt"
-                          className={`w-full px-4 py-3 rounded-2xl border bg-white text-sm text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] ${
-                            errors.donor_email ? "border-red-400" : "border-[#1E2A44]/20"
-                          }`}
-                        />
-                        {errors.donor_email && <p className="text-xs text-red-500 mt-1">{errors.donor_email}</p>}
-                      </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-[#1E2A44] mb-1.5">
-                          <Phone className="w-3.5 h-3.5 inline mr-1 text-stone-400" />
-                          Phone Number (10 digits) *
-                        </label>
-                        <input
-                          type="tel"
-                          value={formData.donor_phone}
-                          onChange={(e) => setFormData({ ...formData, donor_phone: e.target.value })}
-                          placeholder="e.g. 9876543210"
-                          className={`w-full px-4 py-3 rounded-2xl border bg-white text-sm text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] ${
-                            errors.donor_phone ? "border-red-400" : "border-[#1E2A44]/20"
-                          }`}
-                        />
-                        {errors.donor_phone && <p className="text-xs text-red-500 mt-1">{errors.donor_phone}</p>}
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-bold uppercase tracking-wider text-[#1E2A44] mb-1.5">
-                          Donation Purpose
-                        </label>
-                        <input
-                          type="text"
-                          value={formData.donation_purpose || "General Student Sponsorship"}
-                          onChange={(e) => setFormData({ ...formData, donation_purpose: e.target.value })}
-                          className="w-full px-4 py-3 rounded-2xl border border-stone-200 bg-stone-50 text-sm text-[#1E2A44]"
-                          readOnly
-                        />
-                      </div>
-                    </div>
-
+                    {/* Email */}
                     <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-[#1E2A44] mb-1.5">
-                        <MessageSquare className="w-3.5 h-3.5 inline mr-1 text-stone-400" />
-                        Message / Dedication Note (Optional)
-                      </label>
+                      <label className="block text-xs font-medium text-stone-500 mb-1.5">Email address *</label>
+                      <input
+                        type="email"
+                        value={formData.donor_email}
+                        onChange={(e) => setFormData({ ...formData, donor_email: e.target.value })}
+                        placeholder="you@example.com"
+                        className={`w-full px-4 py-3 rounded-xl bg-stone-50 border text-sm text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] focus:border-transparent transition-all ${
+                          errors.donor_email ? "border-red-400 bg-red-50" : "border-stone-200"
+                        }`}
+                      />
+                      {errors.donor_email && <p className="text-xs text-red-500 mt-1">{errors.donor_email}</p>}
+                    </div>
+
+                    {/* Phone */}
+                    <div>
+                      <label className="block text-xs font-medium text-stone-500 mb-1.5">Phone number *</label>
+                      <input
+                        type="tel"
+                        value={formData.donor_phone}
+                        onChange={(e) => setFormData({ ...formData, donor_phone: e.target.value })}
+                        placeholder="9876543210"
+                        className={`w-full px-4 py-3 rounded-xl bg-stone-50 border text-sm text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] focus:border-transparent transition-all ${
+                          errors.donor_phone ? "border-red-400 bg-red-50" : "border-stone-200"
+                        }`}
+                      />
+                      {errors.donor_phone && <p className="text-xs text-red-500 mt-1">{errors.donor_phone}</p>}
+                    </div>
+
+                    {/* Message */}
+                    <div>
+                      <label className="block text-xs font-medium text-stone-500 mb-1.5">Message <span className="text-stone-400">(optional)</span></label>
                       <textarea
                         value={formData.message}
                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                         rows={2}
-                        placeholder="In honor of... or words of encouragement for our children"
-                        className="w-full px-4 py-3 rounded-2xl border border-[#1E2A44]/20 bg-white text-sm text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] resize-none"
+                        placeholder="A note or dedication..."
+                        className="w-full px-4 py-3 rounded-xl bg-stone-50 border border-stone-200 text-sm text-[#1E2A44] focus:outline-none focus:ring-2 focus:ring-[#E8B923] focus:border-transparent resize-none transition-all"
                       />
                     </div>
 
-                    {/* Tax & Trust Note */}
-                    <div className="p-4 rounded-2xl bg-white border border-[#1E2A44]/10 flex items-start gap-3 text-xs text-[#1E2A44]/70">
-                      <ShieldCheck className="w-5 h-5 text-emerald-600 shrink-0 mt-0.5" />
-                      <p className="leading-relaxed">
-                        Donations to John Martyn Memorial Trust are eligible for tax exemption under{" "}
-                        <strong className="text-[#1E2A44]">Section 80G of the Income Tax Act</strong>. An official
-                        receipt will be generated instantly.
-                      </p>
-                    </div>
+                    {/* 80G note */}
+                    <p className="text-[11px] text-stone-400 leading-relaxed">
+                      Eligible for tax exemption under <span className="font-semibold text-stone-500">Section 80G</span>. A receipt will be sent to your email.
+                    </p>
 
+                    {/* Submit */}
                     <button
                       type="submit"
                       disabled={isProcessing}
-                      className="w-full bg-[#1E2A44] hover:bg-[#28385a] text-white font-black py-4 rounded-full transition-all disabled:opacity-50 cursor-pointer shadow-lg flex items-center justify-center gap-2 text-sm uppercase tracking-wider"
+                      className="w-full bg-[#1E2A44] hover:bg-[#28385a] text-white font-bold py-3.5 rounded-xl transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2 text-sm"
                     >
                       {isProcessing ? (
                         <>
                           <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                          <span>Connecting to Razorpay Gateway...</span>
+                          <span>Processing...</span>
                         </>
                       ) : (
                         <>
                           <Heart className="w-4 h-4 text-[#E8B923] fill-[#E8B923]" />
                           <span>
-                            Proceed to Secure Payment · ₹
-                            {formData.amount ? parseFloat(formData.amount).toLocaleString("en-IN") : "0"}
+                            Pay ₹{formData.amount ? parseFloat(formData.amount).toLocaleString("en-IN") : (selectedTier && selectedTier.amount > 0 ? selectedTier.amount.toLocaleString("en-IN") : "0")}
                           </span>
                         </>
                       )}
