@@ -7,6 +7,7 @@ const SchoolEventsPage = lazy(() => import("../pages/SchoolEventsPage"));
 const EventDetailPage = lazy(() => import("../pages/EventDetailPage"));
 const AboutPage = lazy(() => import("../pages/AboutPage"));
 const DonatePage = lazy(() => import("../pages/DonatePage"));
+const GalleryPage = lazy(() => import("../pages/GalleryPage"));
 const AdminDashboard = lazy(() => import("../pages/admin/AdminDashboard"));
 // const History = lazy(() => import("../pages/about/History"));
 // const PrincipalMessage = lazy(() => import("../pages/about/PrincipalMessage"));
@@ -49,6 +50,11 @@ export const routes = [
     path: "/about",
     element: <AboutPage />,
     name: "About",
+  },
+  {
+    path: "/gallery",
+    element: <GalleryPage />,
+    name: "Gallery",
   },
   {
     path: "/donate",

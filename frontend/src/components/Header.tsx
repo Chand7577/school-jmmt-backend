@@ -14,6 +14,7 @@ const staggeredMenuItems = [
   { label: "Academic Leadership & Faculty", link: "/#teachers", isAnchor: true },
   { label: "Success Stories", link: "/success-stories", isAnchor: false },
   { label: "School Events", link: "/school-events", isAnchor: false },
+  { label: "Gallery", link: "/gallery", isAnchor: false },
   { label: "Newsletters", link: "/#newsletters", isAnchor: true },
   { label: "Contact Us", link: "/#contact", isAnchor: true },
 ];
