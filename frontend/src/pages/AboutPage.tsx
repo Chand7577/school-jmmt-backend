@@ -12,6 +12,7 @@ import pic2 from "../assets/Picture2.jpg";
 import pic3 from "../assets/Picture3.jpg";
 import photoRahul from "../assets/mr-rahul.png";
 import photoPhilip from "../assets/mr-philip.png";
+import photoRamni from "../assets/Ramni.jpg";
 import photoNarain from "../assets/mr-narain.png";
 import photoGoyal from "../assets/mr-goyal.png";
 import photoPadamvir from "../assets/mr-padamvir.png";
@@ -36,6 +37,7 @@ interface Trustee {
   role?: string;
   badge?: string;
   photoUrl?: string;
+  photoPosition?: string;
   bio?: string;
   highlights?: string[];
   address?: string;
@@ -92,6 +94,8 @@ const trustees: Trustee[] = [
   },
   {
     name: "Ms. Ramni Nirula",
+    photoUrl: photoRamni,
+    photoPosition: "object-[center_20%]",
     bio: "Ms. Nirula has over three decades of experience in the financial sector, beginning her career with erstwhile ICICI Limited in 1976 in Project Appraisal. She has held senior leadership positions across Project Financing, Strategy, Planning & Resources, and Corporate Banking. She served as Managing Director & CEO of ICICI Securities Limited and headed the Corporate Banking Group of ICICI Bank. She was also part of the senior management team that helped transform ICICI Bank into a technology-led, diversified financial services group with a strong retail presence. After retiring as Senior General Manager, she served as an advisor and key management team member at ICICI Foundation. She has served on the boards of several ICICI Group and leading Indian companies, as well as Welham Girls' School, Dehradun. Ms. Nirula holds a Bachelor's degree in Economics and an MBA from Delhi University.",
     highlights: [
       "Over three decades of experience in the financial sector, starting with ICICI Limited in 1976.",
@@ -466,7 +470,9 @@ const TrusteeCard = ({
               <img
                 src={trustee.photoUrl}
                 alt={trustee.name}
-                className="w-full h-full object-cover object-center rounded-2xl"
+                className={`w-full h-full object-cover rounded-2xl ${
+                  trustee.photoPosition || "object-center"
+                }`}
               />
             ) : (
               <div className="text-center p-4">
