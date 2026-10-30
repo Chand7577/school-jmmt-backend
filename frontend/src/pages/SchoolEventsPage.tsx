@@ -506,42 +506,6 @@ const SchoolEventsPage: React.FC = () => {
           </div>
         )}
 
-        {/* ── 3. BOTTOM VISITOR INVITATION PLATE ── */}
-        <section className="mt-20 p-8 sm:p-12 rounded-3xl bg-[#1E2A44] text-white flex flex-col lg:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-80 h-80 bg-[#E8B923]/10 rounded-full blur-3xl pointer-events-none" />
-
-          <div className="space-y-3 max-w-xl text-left relative z-10">
-            <div className="inline-flex items-center gap-2">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#E8B923]" />
-              <span className="text-[11px] font-mono uppercase tracking-widest text-amber-300">
-                Community Access &amp; Celebrations
-              </span>
-            </div>
-            <h3 className="text-2xl sm:text-3xl font-extralight tracking-tight text-white/95">
-              Would you like to attend our <br className="hidden sm:inline" />
-              <span className="font-black text-[#E8B923]">next campus gathering?</span>
-            </h3>
-            <p className="text-xs sm:text-sm text-white/70 leading-relaxed font-light">
-              All JMMS festivals, sports meets, loom exhibitions, and classical recitals are open to parents, community elders, and education well-wishers across the Doon Valley.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto shrink-0 relative z-10">
-            <Link
-              to="/#contact"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-full bg-[#E8B923] text-[#1E2A44] font-bold text-xs hover:bg-amber-400 transition-all shadow-lg shadow-[#E8B923]/20"
-            >
-              <span>Contact School Office</span>
-              <ArrowRight size={13} />
-            </Link>
-            <Link
-              to="/about"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-3.5 rounded-full bg-white/10 hover:bg-white/15 text-white font-semibold text-xs border border-white/15 transition-all"
-            >
-              <span>Our 40-Year Story</span>
-            </Link>
-          </div>
-        </section>
       </main>
     </div>
   );
