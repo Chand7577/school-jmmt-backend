@@ -127,6 +127,7 @@ const trustees: Trustee[] = [
   },
   {
     name: "Mr. Aftab Seth",
+    role: "Chairman",
     photoUrl: photoAftab,
     bio: "Aftab is a distinguished diplomat, scholar, and poet with a storied career spanning multiple continents. Currently serving as President of the Global Schools Foundation and Chairman of the Global Indian International Schools in Japan, he also chairs the Yoga Organization of Japan. His extensive diplomatic service includes roles as Consul General in Hamburg, Karachi, Cairo, Beirut, and Jakarta, and as Ambassador to Greece, Vietnam, and Japan. Born in Patna on September 17, 1943, Aftab has authored several notable works, including Half A Century: My Connections with Japan, and has deep expertise in the Japanese language, history, and culture. His academic journey includes a First Class degree in History from St. Stephen’s College, a Rhodes Scholarship at Oxford University, and a tenure as Director of the Global Security Research Institute at Keio University, Japan. His career reflects a profound engagement with Japan, from early diplomatic roles to influential academic and cultural contributions.",
     address:
