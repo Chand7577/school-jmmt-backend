@@ -3,17 +3,24 @@ import { createPortal } from "react-dom";
 import {
   X,
   Heart,
-  IndianRupee,
-  GraduationCap,
-  Utensils,
-  Coffee,
+  QrCode,
+  Download,
+  Copy,
   Check,
-  ArrowRight,
+  ExternalLink,
+  ShieldCheck,
+  Smartphone,
+  Mail,
 } from "lucide-react";
-import { API_BASE_URL } from "../config/api";
+// import { API_BASE_URL } from "../config/api";
 import { donationTiers, customDonationTier, DonationTier } from "../data/donationsData";
+import qrCodePdf from "../assets/qr-code.pdf";
+import qrCodeImg from "../assets/qr-code.png";
 
-// Razorpay type declaration
+/* =========================================================================
+   PAYMENT GATEWAY / RAZORPAY TYPE DECLARATION (KEPT FOR FUTURE USE)
+   ========================================================================= */
+/*
 declare global {
   interface Window {
     Razorpay: any;
@@ -38,80 +45,7 @@ interface StatusModalProps {
   amount?: string;
   onClose: () => void;
 }
-
-const StatusModal = ({
-  isOpen,
-  status,
-  title,
-  message,
-  receiptNumber,
-  amount,
-  onClose,
-}: StatusModalProps) => {
-  if (!isOpen) return null;
-
-  const icons = {
-    success: (
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
-        <Check className="h-8 w-8 text-emerald-600" />
-      </div>
-    ),
-    error: (
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
-        <X className="h-8 w-8 text-red-600" />
-      </div>
-    ),
-    cancelled: (
-      <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
-        <X className="h-8 w-8 text-amber-600" />
-      </div>
-    ),
-  };
-
-  return createPortal(
-    <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fadeIn overflow-y-auto">
-      <div className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden animate-slideUp my-auto border border-[#1E2A44]/10">
-        <div className="p-8 text-center">
-          {icons[status]}
-
-          <h3 className="mt-6 text-2xl font-black text-[#1E2A44]">{title}</h3>
-
-          <p className="mt-2 text-sm text-[#1E2A44]/70 leading-relaxed font-light">{message}</p>
-
-          {status === "success" && receiptNumber && (
-            <div className="mt-6 bg-[#FDFBF7] rounded-2xl p-5 border border-[#1E2A44]/10 text-center space-y-2">
-              <div>
-                <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">
-                  Official Receipt Number
-                </p>
-                <p className="text-base font-mono font-black text-[#1E2A44]">{receiptNumber}</p>
-              </div>
-              {amount && (
-                <div className="pt-2 border-t border-[#1E2A44]/10">
-                  <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">
-                    Amount Received
-                  </p>
-                  <p className="text-2xl font-black text-[#E8B923]">₹{parseFloat(amount).toLocaleString("en-IN")}</p>
-                </div>
-              )}
-              <p className="text-[11px] text-[#1E2A44]/60 pt-1 font-light">
-                An 80G tax receipt acknowledgment has also been dispatched to your email address.
-              </p>
-            </div>
-          )}
-
-          <button
-            onClick={onClose}
-            className="mt-6 w-full bg-[#1E2A44] hover:bg-[#28385a] text-white font-bold py-3.5 rounded-full transition-all cursor-pointer shadow-md text-xs uppercase tracking-wider"
-          >
-            {status === "success" ? "Done" : "Close"}
-          </button>
-        </div>
-      </div>
-    </div>,
-    document.body
-  );
-};
+*/
 
 export interface DonateButtonProps {
   initialPackageId?: string;
@@ -127,10 +61,37 @@ const DonateButton: React.FC<DonateButtonProps> = ({
   children,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [step, setStep] = useState<"packages" | "form">("packages");
   const [selectedTier, setSelectedTier] = useState<DonationTier | typeof customDonationTier | null>(null);
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [copied, setCopied] = useState(false);
 
+  const upiId = "9412057444m@pnb";
+  const merchantName = "THE JOHN MARTYN MEMORIAL TRUST";
+  const upiDeepLink = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(
+    merchantName
+  )}&cu=INR`;
+
+  const handleCopyUpi = async () => {
+    try {
+      await navigator.clipboard.writeText(upiId);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    } catch {
+      const textArea = document.createElement("textarea");
+      textArea.value = upiId;
+      document.body.appendChild(textArea);
+      textArea.select();
+      document.execCommand("copy");
+      document.body.removeChild(textArea);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2500);
+    }
+  };
+
+  /* =========================================================================
+     PAYMENT GATEWAY STATE & FORM HANDLER (COMMENTED OUT FOR NOW)
+     =========================================================================
+  const [step, setStep] = useState<"packages" | "form">("packages");
+  const [isProcessing, setIsProcessing] = useState(false);
   const [statusModal, setStatusModal] = useState<{
     isOpen: boolean;
     status: "success" | "error" | "cancelled";
@@ -156,98 +117,29 @@ const DonateButton: React.FC<DonateButtonProps> = ({
 
   const [errors, setErrors] = useState<Partial<DonationFormData>>({});
 
-  useEffect(() => {
-    if (isModalOpen || statusModal.isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [isModalOpen, statusModal.isOpen]);
-
-  const openWithPackage = (pkgId?: string, customAmt?: string) => {
-    if (pkgId) {
-      const found = donationTiers.find((t) => t.id === pkgId) || (pkgId === "custom" ? customDonationTier : null);
-      if (found) {
-        setSelectedTier(found);
-        setFormData({
-          ...formData,
-          amount: found.amount > 0 ? found.amount.toString() : (customAmt || ""),
-          donation_purpose: found.title,
-        });
-        setStep("form");
-        setIsModalOpen(true);
-        return;
-      }
-    }
-    setStep("packages");
-    setSelectedTier(null);
-    setIsModalOpen(true);
-  };
-
-  const handleSelectTier = (tier: DonationTier | typeof customDonationTier) => {
-    setSelectedTier(tier);
-    setFormData({
-      ...formData,
-      amount: tier.amount > 0 ? tier.amount.toString() : "",
-      donation_purpose: tier.title,
-    });
-    setStep("form");
-  };
-
   const validateForm = (): boolean => {
     const newErrors: Partial<DonationFormData> = {};
-
-    if (!formData.donor_name.trim()) {
-      newErrors.donor_name = "Full name is required";
-    }
-
-    if (!formData.donor_email.trim()) {
-      newErrors.donor_email = "Email address is required";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.donor_email)) {
-      newErrors.donor_email = "Please enter a valid email format";
-    }
-
-    if (!formData.donor_phone.trim()) {
-      newErrors.donor_phone = "Phone number is required";
-    } else if (!/^\d{10}$/.test(formData.donor_phone.replace(/\D/g, ""))) {
-      newErrors.donor_phone = "Please enter a valid 10-digit mobile number";
-    }
-
+    if (!formData.donor_name.trim()) newErrors.donor_name = "Full name is required";
+    if (!formData.donor_email.trim()) newErrors.donor_email = "Email address is required";
+    if (!formData.donor_phone.trim()) newErrors.donor_phone = "Phone number is required";
     const amt = parseFloat(formData.amount);
-    if (!formData.amount || isNaN(amt) || amt < 10) {
-      newErrors.amount = "Minimum donation amount is ₹10";
-    }
-
+    if (!formData.amount || isNaN(amt) || amt < 10) newErrors.amount = "Minimum donation amount is ₹10";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     setIsProcessing(true);
-
     try {
       const response = await fetch(`${API_BASE_URL}/api/donations/create-order.php`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
-
       const data = await response.json();
-
-      if (!data.success) {
-        throw new Error(data.message || "Failed to initiate donation order.");
-      }
+      if (!data.success) throw new Error(data.message || "Failed to initiate donation order.");
 
       const options = {
         ...data.data.razorpay_config,
@@ -255,9 +147,7 @@ const DonateButton: React.FC<DonateButtonProps> = ({
           try {
             const verifyResponse = await fetch(`${API_BASE_URL}/api/donations/verify-payment.php`, {
               method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
                 razorpay_order_id: resp.razorpay_order_id,
                 razorpay_payment_id: resp.razorpay_payment_id,
@@ -268,104 +158,86 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                 amount: parseFloat(formData.amount),
               }),
             });
-
             const verifyData = await verifyResponse.json();
-
             if (verifyData.success) {
               setIsModalOpen(false);
               setStatusModal({
                 isOpen: true,
                 status: "success",
                 title: "Thank You for Your Generosity!",
-                message:
-                  "Your sponsorship has been successfully processed. Every rupee directly nourishes and empowers our students in Salangaon.",
+                message: "Your sponsorship has been successfully processed.",
                 receiptNumber: verifyData.data.receipt_number,
                 amount: formData.amount,
               });
-
-              setFormData({
-                donor_name: "",
-                donor_email: "",
-                donor_phone: "",
-                amount: "",
-                donation_purpose: "",
-                message: "",
-              });
-              setStep("packages");
-              setSelectedTier(null);
             } else {
               throw new Error(verifyData.message || "Payment verification failed.");
             }
           } catch (error: any) {
-            setIsModalOpen(false);
             setStatusModal({
               isOpen: true,
               status: "error",
               title: "Verification Alert",
-              message: error.message || "Your payment could not be automatically verified. Please contact us with your transaction ID.",
+              message: error.message || "Verification failed.",
             });
           }
         },
-        modal: {
-          ondismiss: function () {
-            setIsProcessing(false);
-            setIsModalOpen(false);
-            setStatusModal({
-              isOpen: true,
-              status: "cancelled",
-              title: "Payment Cancelled",
-              message: "The payment window was closed before completion. No amount was charged to your account.",
-            });
-          },
-        },
       };
 
-      if (!window.Razorpay) {
-        throw new Error("Razorpay payment gateway failed to load. Please verify your connection.");
-      }
-
+      if (!window.Razorpay) throw new Error("Razorpay gateway failed to load.");
       const rzp = new window.Razorpay(options);
-      rzp.on("payment.failed", function (failResp: any) {
-        setIsProcessing(false);
-        setIsModalOpen(false);
-        setStatusModal({
-          isOpen: true,
-          status: "error",
-          title: "Payment Declined",
-          message: failResp.error?.description || "The payment transaction was declined by your bank. Please try another card or UPI method.",
-        });
-      });
       rzp.open();
     } catch (error: any) {
       setStatusModal({
         isOpen: true,
         status: "error",
         title: "Order Generation Failed",
-        message: error.message || "Unable to reach donation payment gateway. Please try again shortly.",
+        message: error.message,
       });
     } finally {
       setIsProcessing(false);
     }
   };
+  ========================================================================= */
 
-  const getTierIcon = (iconName: string) => {
-    switch (iconName) {
-      case "graduation":
-        return <GraduationCap className="w-5 h-5" />;
-      case "milk":
-        return <Coffee className="w-5 h-5" />;
-      case "food":
-        return <Utensils className="w-5 h-5" />;
-      default:
-        return <Heart className="w-5 h-5" />;
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
     }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isModalOpen]);
+
+  const openWithPackage = (pkgId?: string, customAmt?: string) => {
+    if (pkgId) {
+      const found =
+        donationTiers.find((t) => t.id === pkgId) ||
+        (pkgId === "custom"
+          ? {
+              ...customDonationTier,
+              amount: customAmt ? parseFloat(customAmt) || 0 : 0,
+            }
+          : null);
+      if (found) {
+        setSelectedTier(found);
+        setIsModalOpen(true);
+        return;
+      }
+    }
+    setSelectedTier(null);
+    setIsModalOpen(true);
   };
 
   return (
     <>
       {/* Trigger Button */}
       {children ? (
-        <div onClick={() => openWithPackage(initialPackageId, initialAmount)} className="cursor-pointer">
+        <div
+          onClick={() => openWithPackage(initialPackageId, initialAmount)}
+          className="cursor-pointer"
+        >
           {children}
         </div>
       ) : (
@@ -375,23 +247,192 @@ const DonateButton: React.FC<DonateButtonProps> = ({
             buttonClassName ||
             "relative group overflow-hidden rounded-full p-[2px] transition-all duration-300 hover:scale-105 active:scale-95 shadow-md shadow-[#E8B923]/20 cursor-pointer"
           }
-          aria-label="Make a Donation"
+          aria-label="Make a Donation via QR Code"
         >
           <span className="absolute inset-0 bg-gradient-to-r from-[#E8B923] via-amber-300 to-[#E8B923] rounded-full animate-pulse opacity-75 group-hover:opacity-100 transition-opacity" />
           <span className="relative flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#1E2A44] transition-colors duration-300 group-hover:bg-[#1E2A44]/90">
             <Heart className="w-3.5 h-3.5 text-[#E8B923] fill-[#E8B923] animate-bounce" />
-            <span className="text-white font-extrabold text-xs tracking-wider">DONATE</span>
+            <span className="text-white font-extrabold text-xs tracking-wider">
+              DONATE
+            </span>
           </span>
         </button>
       )}
 
-      {/* Main Donation Modal */}
+      {/* ── QR CODE DONATION MODAL (ACTIVE) ── */}
+      {isModalOpen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/75 backdrop-blur-md animate-fadeIn overflow-y-auto"
+            onClick={() => setIsModalOpen(false)}
+          >
+            <div
+              className="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl animate-slideUp my-auto flex flex-col overflow-hidden border border-[#1E2A44]/10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between p-6 pb-4 bg-gradient-to-r from-[#1E2A44] to-[#162035] text-white">
+                <div>
+                  <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#E8B923]/20 text-[#E8B923] text-[10px] font-mono font-bold uppercase tracking-wider mb-1.5 border border-[#E8B923]/30">
+                    <QrCode className="w-3 h-3" />
+                    <span>Official Bank QR • Zero Charges</span>
+                  </div>
+                  <h2 className="text-lg sm:text-xl font-black text-white leading-snug">
+                    Scan to Pay via UPI
+                  </h2>
+                  <p className="text-xs text-white/70 font-light mt-0.5">
+                    {selectedTier && selectedTier.amount > 0 ? (
+                      <span>
+                        Package: <strong className="text-[#E8B923]">{selectedTier.title}</strong> (₹{selectedTier.amount.toLocaleString("en-IN")})
+                      </span>
+                    ) : (
+                      <span>Donate directly to The John Martyn Memorial Trust</span>
+                    )}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer ml-3 shrink-0"
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+
+              {/* Scrollable Modal Body */}
+              <div className="overflow-y-auto max-h-[78vh] p-6 space-y-5 bg-[#FDFBF7]">
+                {/* 80G Tax Exemption Note (At Top Before QR Code) */}
+                <div className="bg-amber-500/10 border border-[#E8B923]/40 rounded-2xl p-4 space-y-1.5 shadow-2xs">
+                  <div className="flex items-center gap-2 text-[#1E2A44] font-black text-xs">
+                    <ShieldCheck className="w-4 h-4 text-[#E8B923]" />
+                    <span>80G Tax Exemption Receipt</span>
+                  </div>
+                  <p className="text-[11px] text-[#1E2A44]/80 leading-relaxed font-light">
+                    Your contribution is tax-deductible under <strong>Section 80G</strong>. Once you finish payment, please email your transaction screenshot/UTR along with your full name, <strong>PAN / Aadhaar Card</strong>, and address to:
+                  </p>
+                  <a
+                    href="mailto:jmms.dehradun@gmail.com?subject=Donation%20Receipt%2080G"
+                    className="inline-flex items-center gap-1.5 font-mono font-bold text-[11px] text-[#1E2A44] bg-white px-2.5 py-1 rounded-md border border-amber-300 hover:bg-amber-100 transition-colors shadow-2xs"
+                  >
+                    <Mail className="w-3 h-3 text-[#E8B923]" />
+                    <span>jmms.dehradun@gmail.com</span>
+                  </a>
+                </div>
+
+                {/* QR Code Standee Card */}
+                <div className="bg-white rounded-2xl p-4 border border-stone-200 shadow-sm flex flex-col items-center text-center">
+                  <div className="flex items-center justify-between w-full pb-2.5 mb-2.5 border-b border-stone-100 text-[11px] font-mono text-stone-500">
+                    <span className="font-bold text-[#1E2A44] flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      Punjab National Bank
+                    </span>
+                    <span className="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded font-bold">
+                      VERIFIED TRUST
+                    </span>
+                  </div>
+
+                  <div className="rounded-xl overflow-hidden border border-stone-200 bg-[#FAF9F5] p-1 shadow-inner max-w-[280px]">
+                    <img
+                      src={qrCodeImg}
+                      alt="The John Martyn Memorial Trust UPI QR Code"
+                      className="w-full h-auto object-contain"
+                    />
+                  </div>
+
+                  <p className="mt-2.5 text-[11px] text-stone-500 font-mono">
+                    Scan with Google Pay, PhonePe, Paytm, BHIM, or any UPI app
+                  </p>
+
+                  {/* PDF Download and View Buttons */}
+                  <div className="grid grid-cols-2 gap-2 w-full mt-4 pt-3 border-t border-stone-100">
+                    <a
+                      href={qrCodePdf}
+                      download="John-Martyn-Memorial-Trust-QR.pdf"
+                      className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-[#1E2A44] hover:bg-[#28385a] text-white text-[11px] font-bold uppercase tracking-wider transition-colors shadow-xs"
+                    >
+                      <Download className="w-3.5 h-3.5 text-[#E8B923]" />
+                      <span>Download PDF</span>
+                    </a>
+                    <a
+                      href={qrCodePdf}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center justify-center gap-1.5 py-2.5 px-3 rounded-xl bg-stone-100 hover:bg-stone-200 text-[#1E2A44] text-[11px] font-bold uppercase tracking-wider transition-colors border border-stone-200"
+                    >
+                      <ExternalLink className="w-3.5 h-3.5" />
+                      <span>View PDF</span>
+                    </a>
+                  </div>
+                </div>
+
+                {/* UPI Details & Copy Box */}
+                <div className="bg-white rounded-2xl p-5 border border-stone-200 shadow-xs space-y-3">
+                  <div>
+                    <p className="text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest">
+                      Merchant Name
+                    </p>
+                    <p className="text-sm font-black text-[#1E2A44] mt-0.5">
+                      {merchantName}
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-mono font-bold text-stone-400 uppercase tracking-widest mb-1">
+                      Official UPI ID
+                    </label>
+                    <div className="flex items-center justify-between gap-2 bg-[#FAF9F5] p-2.5 rounded-xl border border-dashed border-[#E8B923]">
+                      <span className="font-mono font-black text-sm sm:text-base text-[#1E2A44] select-all">
+                        {upiId}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={handleCopyUpi}
+                        className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer shadow-xs shrink-0 ${
+                          copied
+                            ? "bg-emerald-600 text-white"
+                            : "bg-[#E8B923] hover:bg-[#d4a61f] text-[#1E2A44]"
+                        }`}
+                      >
+                        {copied ? (
+                          <>
+                            <Check className="w-3.5 h-3.5" />
+                            <span>Copied!</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy className="w-3.5 h-3.5" />
+                            <span>Copy UPI</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Mobile Deep Link */}
+                  <a
+                    href={upiDeepLink}
+                    className="w-full inline-flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl bg-[#1E2A44]/5 hover:bg-[#1E2A44]/10 text-[#1E2A44] text-xs font-bold transition-colors border border-[#1E2A44]/10"
+                  >
+                    <Smartphone className="w-4 h-4 text-[#E8B923]" />
+                    <span>Pay directly via UPI App on your phone</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+
+      {/* =========================================================================
+         ORIGINAL PAYMENT GATEWAY / RAZORPAY MODAL (COMMENTED OUT FOR NOW)
+         To restore the payment gateway, uncomment the block below and the
+         corresponding state and handleSubmit logic above.
+         ========================================================================= */}
+      {/*
       {isModalOpen &&
         createPortal(
           <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn overflow-y-auto">
             <div className="relative w-full max-w-md bg-white rounded-2xl shadow-xl animate-slideUp my-auto flex flex-col">
-
-              {/* Header */}
               <div className="flex items-start justify-between p-6 pb-4">
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-widest text-[#E8B923] mb-1">
@@ -414,10 +455,8 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                 </button>
               </div>
 
-              {/* Divider */}
               <div className="h-px bg-stone-100 mx-6" />
 
-              {/* Scrollable Content */}
               <div className="overflow-y-auto max-h-[75vh] p-6">
                 {step === "packages" ? (
                   <div className="space-y-3">
@@ -453,7 +492,6 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                       </button>
                     ))}
 
-                    {/* Custom Amount */}
                     <button
                       onClick={() => handleSelectTier(customDonationTier)}
                       className="w-full text-left rounded-xl p-4 flex items-center justify-between gap-4 bg-stone-50 hover:bg-stone-100 transition-all cursor-pointer"
@@ -471,7 +509,6 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                     </button>
                   </div>
                 ) : (
-                  // Step 2: Form
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <button
                       type="button"
@@ -485,7 +522,6 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                       ← Back
                     </button>
 
-                    {/* Amount pill */}
                     {selectedTier && selectedTier.amount > 0 && (
                       <div className="flex items-center justify-between bg-stone-50 rounded-xl px-4 py-3">
                         <span className="text-sm text-stone-500">Amount</span>
@@ -493,7 +529,6 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                       </div>
                     )}
 
-                    {/* Custom amount input */}
                     {selectedTier && selectedTier.amount === 0 && (
                       <div>
                         <label className="block text-xs font-medium text-stone-500 mb-1.5">Amount (₹)</label>
@@ -512,7 +547,6 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                       </div>
                     )}
 
-                    {/* Name */}
                     <div>
                       <label className="block text-xs font-medium text-stone-500 mb-1.5">Full name *</label>
                       <input
@@ -527,7 +561,6 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                       {errors.donor_name && <p className="text-xs text-red-500 mt-1">{errors.donor_name}</p>}
                     </div>
 
-                    {/* Email */}
                     <div>
                       <label className="block text-xs font-medium text-stone-500 mb-1.5">Email address *</label>
                       <input
@@ -542,7 +575,6 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                       {errors.donor_email && <p className="text-xs text-red-500 mt-1">{errors.donor_email}</p>}
                     </div>
 
-                    {/* Phone */}
                     <div>
                       <label className="block text-xs font-medium text-stone-500 mb-1.5">Phone number *</label>
                       <input
@@ -557,7 +589,6 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                       {errors.donor_phone && <p className="text-xs text-red-500 mt-1">{errors.donor_phone}</p>}
                     </div>
 
-                    {/* Message */}
                     <div>
                       <label className="block text-xs font-medium text-stone-500 mb-1.5">Message <span className="text-stone-400">(optional)</span></label>
                       <textarea
@@ -569,12 +600,10 @@ const DonateButton: React.FC<DonateButtonProps> = ({
                       />
                     </div>
 
-                    {/* 80G note */}
                     <p className="text-[11px] text-stone-400 leading-relaxed">
                       Eligible for tax exemption under <span className="font-semibold text-stone-500">Section 80G</span>. A receipt will be sent to your email.
                     </p>
 
-                    {/* Submit */}
                     <button
                       type="submit"
                       disabled={isProcessing}
@@ -601,17 +630,7 @@ const DonateButton: React.FC<DonateButtonProps> = ({
           </div>,
           document.body
         )}
-
-      {/* Payment Status Modal */}
-      <StatusModal
-        isOpen={statusModal.isOpen}
-        status={statusModal.status}
-        title={statusModal.title}
-        message={statusModal.message}
-        receiptNumber={statusModal.receiptNumber}
-        amount={statusModal.amount}
-        onClose={() => setStatusModal({ ...statusModal, isOpen: false })}
-      />
+      */}
     </>
   );
 };

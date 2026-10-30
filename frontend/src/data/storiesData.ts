@@ -2,85 +2,77 @@ import shubhamImg from "../assets/shubham.png";
 
 export interface Story {
   id: string;
-  category: "achiever" | "parent" | "community";
   name: string;
-  role: string;
-  badge: string;
-  quote: string;
-  achievement: string;
-  avatar: string;
-  details?: string;
-  storyTitle?: string;
+  headline: string;
+  description: string;
+  avatar?: string;
+  initials: string;
 }
 
 export const storiesData: Story[] = [
   {
+    id: "saniya-bhandari",
+    name: "Saniya Bhandari",
+    headline: "From Student to Mentor",
+    description:
+      "A proud alumna of John Martyn Memorial School, Saniya Bhandari holds a B.Sc. (Hons.) in Agriculture and has been associated with Yuva Kalyan Samiti (YKS) for two years. She has returned to her alma mater to conduct free classes, helping students prepare for the Jawahar Navodaya Vidyalaya (JNV) entrance examination.",
+    initials: "SB",
+  },
+  {
+    id: "radhika",
+    name: "Radhika",
+    headline: "Pursuing Higher Education with Determination",
+    description:
+      "Radhika is pursuing a four-year undergraduate programme in B.Sc. Economics (Major) at Ahmedabad University. With the support of financial aid, she continues to work towards her academic goals and a promising future.",
+    initials: "R",
+  },
+  {
+    id: "ananya-sharma",
+    name: "Ananya Sharma",
+    headline: "Building a Career in Inclusive Education",
+    description:
+      "After completing her schooling at Doon Valley Public School and Scholars Home, Ananya Sharma enrolled in the Diploma in Indian Sign Language Interpretation (DISLI) programme at NIEPVD, Dehradun, for the 2025–27 session. She is preparing for a career dedicated to communication and inclusion.",
+    initials: "AS",
+  },
+  {
+    id: "rahul-das",
+    name: "Rahul Das",
+    headline: "From Academics to Professional Growth",
+    description:
+      "Rahul Das completed Class XII at The Doon School in 2017 and earned a B.Sc. in Sports Science from Manipal University in 2021. He subsequently worked in the Administration Department at TCS, Odisha, reflecting his commitment to professional growth.",
+    initials: "RD",
+  },
+  {
     id: "shubham-dhiman",
-    category: "achiever",
     name: "Shubham Dhiman",
-    role: "JMMS & The Doon School Alumnus",
-    badge: "Full Ashoka Scholarship",
-    storyTitle: "From JMMS Classrooms to Ashoka University & Doon School Weekly Editor",
-    quote:
-      "Shubham was helpful by nature, especially when new tasks came up one after the other. 'Don’t worry, I will do it', he said often. He kept a level head even if he did get frustrated at times. He was quite artistic and enjoyed drawing and making greeting cards.",
-    achievement: "Full scholarship at Ashoka University • Boxing Captain • Published Hindi Poet",
+    headline: "Pursuing Excellence in the Humanities",
+    description:
+      "Shubham Dhiman completed Class XII at The Doon School in 2018 and went on to pursue English Honours at Ashoka University, Sonipat, Haryana. His academic journey reflects his dedication to higher learning and intellectual growth.",
     avatar: shubhamImg,
-    details:
-      "Shubham Dhiman has just finished his schooling at the Doon School and has been given a full scholarship by the most-sought-after Ashoka University at Sonepat, Haryana. Shubham left Doon with full school colours, as boxing captain and editor of the Hindi edition of the Doon School Weekly. He has published a book of his Hindi poems, breaking the myth that jocks cannot think!",
+    initials: "SD",
   },
   {
-    id: "rohit-negi",
-    category: "achiever",
-    name: "Rohit Negi",
-    role: "JMMS Alumnus (Class of 2018)",
-    badge: "Scholarship Achiever",
-    quote:
-      "John Martyn Memorial School gave me the confidence to believe in my potential. The teachers stayed after hours to help me prepare for senior school entrance exams.",
-    achievement: "Now pursuing BSc Computer Science on full scholarship",
-    avatar: "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=150&q=80",
+    id: "dilip-maurya",
+    name: "Dilip Maurya",
+    headline: "Turning Technical Knowledge into a Career",
+    description:
+      "Dilip Maurya completed Class XII at The Doon School in 2020 and pursued Computer Science Engineering at Shoolini University, Himachal Pradesh. He subsequently joined TCS Ltd., Adibatla, Hyderabad, as an Assistant System Engineer – Trainee.",
+    initials: "DM",
   },
   {
-    id: "sunita-rawat",
-    category: "achiever",
-    name: "Sunita Rawat",
-    role: "JMMS Alumna (Class of 2020)",
-    badge: "State Level Athlete",
-    quote:
-      "At JMMS, sports and arts were just as valued as books. The skills development program taught me discipline, focus, and self-belief.",
-    achievement: "Gold Medalist at Uttarakhand Junior Athletics",
-    avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=150&q=80",
+    id: "kapil-thapli",
+    name: "Kapil Thapli",
+    headline: "Embracing Global Opportunities",
+    description:
+      "Kapil Thapli completed Class XII at The Doon School in July 2023 and secured admission to Muskingum University, USA, for a four-year programme in Chemical Engineering. His achievement marks an exciting step towards international higher education.",
+    initials: "KT",
   },
   {
-    id: "priya-sharma",
-    category: "parent",
-    name: "Priya Sharma",
-    role: "Mother of Class 3 Student",
-    badge: "Parent Community Member",
-    quote:
-      "Going by the school’s motto that childhood is a journey, my son never feels burdened. He comes home brimming with curiosity and eager to share what he read in the library.",
-    achievement: "Active member in the parent reading circle",
-    avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=150&q=80",
-  },
-  {
-    id: "rajesh-kumar",
-    category: "parent",
-    name: "Rajesh Kumar",
-    role: "Father of Class 5 Student",
-    badge: "Village Artisan",
-    quote:
-      "The dedicated teachers with decades of experience treat each student like family. My daughter’s spoken English and mathematical skills have improved tremendously.",
-    achievement: "Daughter selected for Inter-School Science Fair",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
-  },
-  {
-    id: "kamla-devi",
-    category: "community",
-    name: "Kamla Devi",
-    role: "Village Community Staff & Parent",
-    badge: "Community Team Member",
-    quote:
-      "JMMS didn’t just educate our kids; it identified skills among village parents and welcomed us into the school’s working team. It gave our household financial security and pride.",
-    achievement: "School Nutrition & Garden Lead",
-    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=150&q=80",
+    id: "shashank-dhiman",
+    name: "Shashank Dhiman",
+    headline: "A Promising Step Towards International Education",
+    description:
+      "Currently studying in Class XII at The Doon School, Shashank Dhiman has secured admission to Muskingum University, USA, for a four-year programme in Economics and Mathematics. This milestone reflects his ambition and promising academic future.",
+    initials: "SD",
   },
 ];

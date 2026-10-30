@@ -1,6 +1,12 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { GraduationCap, Coffee, Utensils, ArrowRight } from "lucide-react";
+import {
+  GraduationCap,
+  Coffee,
+  Utensils,
+  ArrowRight,
+  HeartHandshake,
+} from "lucide-react";
 import DonateButton from "../components/DonateButton";
 import { donationTiers } from "../data/donationsData";
 
@@ -28,7 +34,9 @@ const DonatePage: React.FC = () => {
         <div className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-10 xl:px-12 relative z-10">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-xs text-white/50 font-mono mb-8">
-            <Link to="/" className="hover:text-white transition-colors">Home</Link>
+            <Link to="/" className="hover:text-white transition-colors">
+              Home
+            </Link>
             <span>/</span>
             <span className="text-[#E8B923] font-bold">Donate</span>
           </div>
@@ -37,7 +45,7 @@ const DonatePage: React.FC = () => {
             <div className="inline-flex items-center gap-2.5">
               <span className="w-7 h-px bg-[#E8B923]" />
               <span className="text-[11px] font-bold tracking-[0.25em] text-[#E8B923] uppercase">
-                Child Sponsorship
+                Child Sponsorship & Donations
               </span>
             </div>
 
@@ -47,14 +55,46 @@ const DonatePage: React.FC = () => {
             </h1>
 
             <p className="text-sm sm:text-lg text-white/75 font-light leading-relaxed max-w-2xl">
-              Your donation directly supports rural children with education, nutrition, and daily transport.
+              Your donation directly supports rural children with quality education, nutrition,
+              and daily transport. Click below to donate via our official UPI QR code.
             </p>
+
+            {/* Quick Action Button */}
+            <div className="pt-3">
+              <a
+                href="#sponsorship-packages"
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#E8B923] hover:bg-[#d4a61f] text-[#1E2A44] font-bold text-xs uppercase tracking-wider transition-all shadow-md"
+              >
+                <span>View Annual Packages</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </a>
+            </div>
           </div>
         </div>
       </header>
 
       {/* ── 3 DONATION TIERS ── */}
-      <main className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-10 xl:px-12 py-16 lg:py-24">
+      <main
+        id="sponsorship-packages"
+        className="max-w-[1380px] mx-auto px-4 sm:px-8 lg:px-10 xl:px-12 py-16 lg:py-24"
+      >
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+          <div>
+            <div className="inline-flex items-center gap-2 mb-2">
+              <span className="w-5 h-0.5 bg-[#E8B923]" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#E8B923]">
+                Annual Sponsorship Packages
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl font-black text-[#1E2A44]">
+              Choose How You Want to Make an Impact
+            </h2>
+          </div>
+          <p className="text-xs sm:text-sm text-[#1E2A44]/70 max-w-md">
+            Click any package to view the direct UPI QR payment details. All donations qualify for 80G tax benefits.
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
           {donationTiers.map((tier) => (
             <div
@@ -110,7 +150,7 @@ const DonatePage: React.FC = () => {
                 </p>
               </div>
 
-              {/* Donate Button */}
+              {/* Donate Button - Opens QR Code Modal */}
               <DonateButton initialPackageId={tier.id}>
                 <div
                   className={`w-full py-4 rounded-full font-black text-xs uppercase tracking-wider transition-all shadow-md flex items-center justify-center gap-2 group-hover:gap-3 cursor-pointer ${
@@ -125,6 +165,30 @@ const DonatePage: React.FC = () => {
               </DonateButton>
             </div>
           ))}
+        </div>
+
+        {/* ── CUSTOM CONTRIBUTION CALLOUT ── */}
+        <div className="mt-12 bg-white rounded-3xl p-6 sm:p-8 border border-[#1E2A44]/10 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-2xl bg-[#E8B923]/15 flex items-center justify-center text-[#1E2A44] shrink-0">
+              <HeartHandshake className="w-6 h-6 text-[#E8B923]" />
+            </div>
+            <div>
+              <h4 className="text-lg font-black text-[#1E2A44]">
+                Want to contribute a custom amount?
+              </h4>
+              <p className="text-xs sm:text-sm text-[#1E2A44]/70 font-light">
+                You can choose any custom contribution amount and scan our official UPI QR code with zero transaction charges.
+              </p>
+            </div>
+          </div>
+          <div className="shrink-0 w-full md:w-auto">
+            <DonateButton initialPackageId="custom">
+              <div className="px-6 py-3 rounded-full bg-[#1E2A44] hover:bg-[#28385a] text-white font-bold text-xs uppercase tracking-wider transition-all shadow cursor-pointer text-center">
+                Custom Donation Amount
+              </div>
+            </DonateButton>
+          </div>
         </div>
       </main>
     </div>
